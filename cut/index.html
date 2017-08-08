@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>视频截取</title>
+<script>
+
+var defaultVideo = "../video/7j540.mp4";
+
+Date.prototype.Format = function (fmt) {
+    var o = {
+        "h+": this.getUTCHours(),                   //小时
+        "m+": this.getUTCMinutes(),                 //分
+        "s+": this.getUTCSeconds(),                 //秒
+    };
+    for (var k in o) {
+        if (new RegExp("(" + k + ")").test(fmt)){
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        }
+    }
+    return fmt;
+}
+
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return null;
+}
+
+var currentSegmentBeginTime = new Date(0);
+
+window.onload = function () {
+  var buttonAddSegment = document.querySelectorAll('.addSegment')[0];
+  var buttonDoCut = document.querySelectorAll('.doCut')[0];
+  var video = document.querySelectorAll('video')[0];
+  var width = 960;
+  var height = 540;
+  
+  buttonDoCut.disabled = true;
+
+  var file = getQueryString("file");
+  video.src = file?file:defaultVideo;
+  
+  video.width = width;
+  video.height = height;
+  video.controls = true;
+  video.autoplay = true;
+  video.loop = true;
+  video.muted = true;
+
+  buttonAddSegment.onclick = function(){
+      var time = video.currentTime;
+      var currentVideoTime = new Date(time*1000);
+      console.log(currentVideoTime.Format("hh:mm:ss"));
+      
+      if(currentSegmentBeginTime.getTime() == 0){
+          var segmentslist = document.getElementById('segmentsList');
+          
+          var segment = "<li class=\"segmentItem\"><div class=\"timestamp\">-ss ";
+          segment += currentVideoTime.Format("hh:mm:ss");
+          segment += "<div></li>";
+          
+          segmentsList.innerHTML += segment;
+
+          currentSegmentBeginTime = currentVideoTime;
+          buttonAddSegment.innerText = "标记结束";
+          buttonDoCut.disabled = true;
+      }
+      else{
+          if(currentVideoTime > currentSegmentBeginTime){
+              var segments = document.querySelectorAll('.segmentItem');
+              var liSegment = segments[segments.length - 1];
+              
+              var timeSpan = new Date(currentVideoTime - currentSegmentBeginTime);
+              liSegment.innerText = liSegment.innerText.substr(0, liSegment.innerText.length - 1) + " -t ";
+              liSegment.innerText += timeSpan.Format(" hh:mm:ss");
+              
+              currentSegmentBeginTime = new Date(0);
+              buttonAddSegment.innerText = "增加片段";
+              buttonDoCut.disabled = false;
+          }
+          else{
+              alert("结束时间必须大于起始时间！");
+          }
+      }
+  };
+  
+  buttonDoCut.onclick = function(){
+      //cut.php?segments[]=-ss 00:00:10 -t 00:00:10&segments[]=-ss 00:00:50 -t 00:00:20
+      
+      var jumpUrl = "cut.php?video=";
+      var file = getQueryString("file");
+      jumpUrl += file?file:defaultVideo;
+      jumpUrl += "&";
+      var segments = document.querySelectorAll('.segmentItem');
+      
+      for (var i=0; i<segments.length; i++){
+          jumpUrl += "segments[]=";
+          jumpUrl += segments[i].innerText;
+          jumpUrl += "&";
+      }
+      window.location.href = jumpUrl;
+  };
+};
+
+</script>
+</head>
+
+<body>
+<h1>视频截取</h1>
+<video>仅支持H264格式MP4</video>
+<ul id="segmentsList"></ul>
+<button class="addSegment">增加片段</button>
+<button class="doCut">开始切割</button>
+</body>
+</html>

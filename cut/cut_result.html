@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>截取视频列表</title>
+<script>
+    
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return null;
+}
+
+window.onload = function () {
+    //http://localhost/cut_result.html?files[]=video/0.mp4&
+    var videoList = document.getElementById('videoList');
+    
+    var count = getQueryString("filesCount");
+    for(var i=0; i < count; i++){
+        var fileName = getQueryString("files" + i);
+        var videoItem = "<li class=\"videoItem\"><video width=480 height=270 controls='true' src=" + fileName +">仅支持H264格式MP4</video><a href=\index.html?file=" + fileName +">点击截取</a> <a href=./../edit/index.html?file=" + fileName +">点击编辑</a></li><p>";
+        videoList.innerHTML += videoItem;
+    }
+};
+
+</script>
+</head>
+
+<body>
+<h1>截取视频列表</h1>
+<ul id="videoList"></ul>
+</body>
+</html>

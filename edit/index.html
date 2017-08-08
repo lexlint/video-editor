@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>视频编辑</title>
+	<meta name="Generator" content="EditPlus">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <!-- 引用css -->
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
+	<!-- 引用js -->
+    <script src="./jquery/jquery-1.10.2.js"></script>
+    <script src="./jquery/jquery-ui-1.11.0.js"></script>
+    <script type="text/javascript" src="js/drag.js"></script>
+    <script type="text/javascript" src="js/edit.js"></script>
+	
+	<script>
+    window.onload = function () {
+        var video = document.querySelectorAll('video')[0];
+        var width = 960;
+        var height = 540;
+        
+        var file = getQueryString("file");
+        video.src = file?file:"./../video/lol3.mp4";
+        
+        video.width = width;
+        video.height = height;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.ontimeupdate = function() {onTimeUpdate()};;
+    };
+    
+    function allowDrop(ev){
+        ev.preventDefault();
+    }
+    
+    function drag(ev){
+        ev.dataTransfer.setData("emoji-id",ev.target.id);
+    }
+    
+    var numEffect = 0;
+    var effectType = new Array();
+    function refreshHandler(){
+        for (var i=0;i<numEffect;i++)
+        {
+            $("#effect"+ i).resizable({
+                                      aspectRatio: effectType[i] == "img" ? true : false//开启按比例缩放，也可以指定比例： 16 / 9
+                                      });
+            $("#effect"+ i).dragging({
+                                     move: 'both',
+                                     randomPosition: false,
+                                     hander: '.hander'
+                                     });
+        }
+    }
+    
+    function drop(ev){
+        ev.preventDefault();
+        var data=ev.dataTransfer.getData("emoji-id");
+        effectType[numEffect] = "img";
+        var effectID = "effect" + numEffect++;
+        var newEffect = "<div id=\"";
+        newEffect += effectID;
+        newEffect += "\" class=\"ui-widget-content\" ><i class='hander'></i><img width=100% height=100% src=\"emoji/";
+        newEffect += data;
+        if(data == "tt"){
+            newEffect += ".gif\"></div>";
+        }
+        else{
+            newEffect += ".png\"></div>";
+        }
+        
+        var effectContainer = document.getElementById("effect-container");
+        effectContainer.innerHTML += newEffect;
+        
+        $("#" + effectID).css({
+                              position: 'absolute',
+                              top: ev.offsetY,
+                              left: ev.offsetX
+                              });
+        refreshHandler();
+    }
+
+    function addText(){
+        var inputText = document.getElementById("inputText");
+        effectType[numEffect] = "txt";
+        var effectID = "effect" + numEffect++;
+        var newEffect = "<div id=\"";
+        newEffect += effectID;
+        newEffect += "\" class=\"ui-widget-content \" style=\"padding: 10px\"><i class='hander'></i><span font-size=100% >";
+        newEffect += inputText.value;
+        newEffect += "</span></div>";
+        
+        inputText.value = "";
+
+        var effectContainer = document.getElementById("effect-container");
+        effectContainer.innerHTML += newEffect;
+        
+        $("#" + effectID).css({
+                              position: 'absolute',
+                              top: effectContainer.clientHeight / 2,
+                              left: effectContainer.clientWidth / 2
+                              });
+        refreshHandler();
+    }
+    
+    
+    $(function() {
+      $( "#slider-range" ).slider({
+                                  range: true,
+                                  min: 0,
+                                  max: 30,
+                                  values: [ 0, 30 ],
+                                  slide: function( event, ui ) {
+                                  
+                                  console.log($( "#slider-range" ).slider( "values", 0 ));
+                                  console.log($( "#slider-range" ).slider( "values", 1 ));
+                                  
+                                  $( "#amount" ).val( new Date($( "#slider-range" ).slider( "values", 0 )*1000).Format("hh:mm:ss") + " - " + new Date($( "#slider-range" ).slider( "values", 1 )*1000).Format("hh:mm:ss") );
+                                  }
+                                  });
+      $( "#amount" ).val( new Date($( "#slider-range" ).slider( "values", 0 )*1000).Format("hh:mm:ss") +
+                         " - " + new Date($( "#slider-range" ).slider( "values", 1 )*1000).Format("hh:mm:ss") );
+      });
+      function onTimeUpdate(){
+      }
+
+	</script>
+ </head>
+ <body>
+    <div id="editor-container">
+        <div id="video-container">
+            <video controls="controls">仅支持H264格式MP4</video>
+        </div>
+        <div id="effect-container" class='effect-container box box-5' ondragover="allowDrop(event)" ondrop="drop(event)">
+        </div>
+    </div>
+    <label>特效列表：</label>
+    <ul id="effectList">
+        <li id ="eddect1">
+            <label for="amount">时间范围：</label>
+            <input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold; "/>
+            <img class="effect" src="emoji/zm.png"/>
+            <div id="slider-range" style="width:960px"></div>
+        </li>
+    </ul>
+    <label>表情列表：</label>
+    <div class="emoji" >
+        <img id="zm" class="emoji" src="emoji/zm.png" draggable="true" ondragstart="drag(event)"></img>
+        <img id="wx" class="emoji" src="emoji/wx.png" draggable="true" ondragstart="drag(event)"></img>
+        <img id="ll" class="emoji" src="emoji/ll.png" draggable="true" ondragstart="drag(event)"></img>
+        <img id="kl" class="emoji" src="emoji/kl.png" draggable="true" ondragstart="drag(event)"></img>
+        <img id="cy" class="emoji" src="emoji/cy.png" draggable="true" ondragstart="drag(event)"></img>
+        <img id="tt" class="emoji" src="emoji/tt.gif" draggable="true" ondragstart="drag(event)"></img>
+        <img id="clock" class="emoji" src="emoji/clock.png" draggable="true" ondragstart="drag(event)"></img>
+    </div>
+    <div>
+        <textarea id="inputText" rows="3" cols="30"></textarea>
+        <button class="addText" onclick="addText()">增加文字</button>
+    </div>
+    <input type="range"><label>背景音乐：</label>
+    <p>
+    <button class="doEdit" onclick="doEdit()">提交编辑</button>
+    <iframe src="http://www.xiami.com/search" width=100% height=500></iframe>
+ </body>
+ </html>

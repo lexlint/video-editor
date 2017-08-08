@@ -1,0 +1,79 @@
+视频快速裁剪：
+ffmpeg -ss 00:00:10 -i lol.mp4 -c copy -t 340 -movflags faststart lol6.mp4
+
+-ss 00:00:10 
+起始时间（在输入文件前，可以保证与-c copy配合使用时能自动定位到前面最近的关键帧）
+-i lol.mp4 
+输入文件
+-c copy 
+复制流
+-t 340 
+时长
+-movflags faststart 
+前置moov box
+lol6.mp4
+输出文件
+
+
+单图叠加(缩放、指定位置、指定起止时间)
+ffmpeg -i lol3.mp4 -i cy.png -filter_complex "\
+[1]scale=200:200[v1];\
+[0][v1]overlay=x=50:y=50:enable='between(t,5,10)'[v2]\
+" -map [v2] -map 0:a out.mp4
+
+
+单图【动图】叠加（缩放、指定位置、指定起止时间)
+ffmpeg -i lol3.mp4 -ignore_loop 0 -i tt.gif -filter_complex "\
+[1]scale=60:60[v1];\
+[0][v1]overlay=x=50:y=50:enable='between(t,5,10)':shortest=1[v2]\
+" -map [v2] -map 0:a out.mp4
+
+
+多段动图支持选时间(非0起始动图首帧会闪烁)
+ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -filter_complex "\
+[1]scale=150:150[v1];\
+[2]scale=150:150[v2];\
+[0][v1]overlay=x=10:y=10:enable='between(t,0,10)':shortest=1[v3];\
+[v3][v2]overlay=x=120:y=120:enable='between(t,8,19)':shortest=1[v4]\
+" -map [v4] -map 0:a out.mp4
+
+
+叠加文字
+ffmpeg -i lol3.mp4 -i cy.png -filter_complex "\
+[0] [1] overlay[b];\
+[b] drawtext=fontfile=/Library/Fonts/Songti.ttc:text=你好，呵呵呵呵呵呵:fontcolor=red:fontsize=48:x=150:y=200\
+" out.mp4
+
+图文混合
+ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -filter_complex "\
+[1]scale=150:150[v1];\
+[2]scale=150:150[v2];\
+[0][v1]overlay=x=10:y=10:enable='between(t,0,10):shortest=1'[v3];\
+[v3][v2]overlay=x=120:y=120:enable='between(t,8,19):shortest=1'[v4];\
+[v4] drawtext=fontfile=/Library/Fonts/Songti.ttc:text=你好，呵呵呵呵呵呵:fontcolor=red:fontsize=48:x=150:y=200:enable='between(t,7,15)'[v5]\
+" -map [v5] -map 0:a out.mp4
+
+
+混音
+ffmpeg -i lol3.mp4 -i numb.mp3 -filter_complex "\
+[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=0.9[a0];\
+[1:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=1.0[a1];\
+[a0][a1]amix=inputs=2:duration=first[aout]\
+" -map "[aout]" -ac 2 -c:v copy -map 0:v:0 out.mp4
+
+
+图文背景音乐
+ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.mp3 -filter_complex "\
+[1:v]scale=150:150[src1];\
+[2:v]scale=150:150[src2];\
+[0:v][src1]overlay=x=10:y=10:enable='between(t,0,10):shortest=1'[dest1];\
+[dest1][src2]overlay=x=120:y=120:enable='between(t,8,19):shortest=1'[dest2];\
+[dest2] drawtext=fontfile=/Library/Fonts/Songti.ttc:text=你好，呵呵呵呵呵呵:fontcolor=red:fontsize=48:x=150:y=200:enable='between(t,7,15)'[dest3];\
+[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=0.9[a0];\
+[3:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=1.0[a3];\
+[a0][a3]amix=inputs=2:duration=first[aout]\
+" -map [dest3] -map [aout] out.mp4
+
+
+
+ 

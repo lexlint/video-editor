@@ -1,0 +1,3 @@
+#test file
+/video/*
+!video/lol3.mp4

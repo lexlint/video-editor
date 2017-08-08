@@ -1,0 +1,50 @@
+*{margin:0;padding:0;}
+li{list-style:none outside none;}
+body {
+	background: #aaa;
+	font-family:"å¾®è½¯é›…é»‘", "é»‘ä½“"
+	padding:20px 0 0px;
+}
+
+.box {
+    width: 960px;
+    margin: 0 auto 20px;
+    height: 500px;
+    background:#;
+    border: 1px solid #000;
+    background-color: rgba(0,0,0,0);
+}
+
+i.hander {
+	display:block;
+	position: absolute;
+	width:100%;
+	height:100%;
+	background:#ccc;
+	filter:alpha(opacity=0);  
+    -moz-opacity:0;  
+    -khtml-opacity: 0;  
+    opacity: 0;
+}
+
+img.emoji {
+    width: 5%;
+    height: 5%;
+}
+
+img.effect {
+    width: 3%;
+    height: 3%;
+}
+
+span {
+    font-size:100%;
+    color:#ff0000
+}
+
+.effect-container{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(0,0,0,0);
+}
