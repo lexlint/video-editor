@@ -15,6 +15,10 @@ body {
     background-color: rgba(0,0,0,0);
 }
 
+.slider-range{
+    width: 960px;
+}
+
 i.hander {
 	display:block;
 	position: absolute;
@@ -25,6 +29,11 @@ i.hander {
     -moz-opacity:0;  
     -khtml-opacity: 0;  
     opacity: 0;
+}
+
+video.previewer {
+    width: 960px;
+    height: 540px;
 }
 
 img.emoji {
