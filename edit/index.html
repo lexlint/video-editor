@@ -15,11 +15,13 @@
     <script type="text/javascript" src="js/edit.js"></script>
 	
 	<script>
+        var defaultVideo = "../video/lol3.mp4";
+
         window.onload = function () {
         var video = document.getElementById("previewer");
         
         var file = getQueryString("file");
-        video.src = file?file:"./../video/lol3.mp4";
+        video.src = file?file:defaultVideo;
         
         video.autoplay = true;
         video.muted = true;

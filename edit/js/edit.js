@@ -41,9 +41,20 @@ function drag(ev){
     ev.dataTransfer.setData("emoji", JSON.stringify($.grep(emojiList, function(e){ return e.id == ev.target.id; })[0]));
 }
 
-var numEffect = 0;
+function refreshEffect(){
+    var currentTime = $( "#previewer" )[0].currentTime;
+    for(var index = 0; index < effectList.length; index ++){
+        if(effectList[index].begin > currentTime || effectList[index].end < currentTime){
+            $("#effect"+ index)[0].style.visibility = "hidden";
+        }
+        else{
+            $("#effect"+ index)[0].style.visibility = "visible";
+        }
+    }
+}
+
 function refreshHandler(){
-    for (var i=0;i<numEffect;i++)
+    for (var i=0;i<effectList.length;i++)
     {
         $("#effect"+ i).resizable({
                                   aspectRatio: effectList[i].type == "img" ? true : false//开启按比例缩放，也可以指定比例： 16 / 9
@@ -65,33 +76,23 @@ function refreshHandler(){
                                             effectList[index].begin = ui.values[0];
                                             effectList[index].end = ui.values[1];
                                             $( "#amount-" + index).val( new Date(ui.values[0]*1000).Format("hh:mm:ss") + " - " + new Date(ui.values[1]*1000).Format("hh:mm:ss") );
+                                            refreshEffect();
                                             }
                                         });
         $( "#amount-" + i ).val( new Date(effectList[i].begin*1000).Format("hh:mm:ss") + " - " + new Date(effectList[i].end*1000).Format("hh:mm:ss") );
     }
 }
 
-function refreshEffect(){
-    var currentTime = $( "#previewer" )[0].currentTime;
-    for(var index = 0; index < effectList.length; index ++){
-        if(effectList[index].begin > currentTime || effectList[index].end < currentTime){
-            $("#effect"+ index)[0].style.visibility = "hidden";
-        }
-        else{
-            $("#effect"+ index)[0].style.visibility = "visible";
-        }
-    }
-}
-
 function drop(ev){
     ev.preventDefault();
-    
+    var numEffect = effectList.length;
     var emoji = JSON.parse(ev.dataTransfer.getData("emoji"));
     effectList[numEffect] = {
         type: "img",
         file: emoji.file,
         begin: $( "#previewer" )[0].currentTime,
-        end: $( "#previewer" )[0].duration
+        end: $( "#previewer" )[0].duration,
+        animate: emoji.animate
     };
     
     var effectID = "effect" + numEffect;
@@ -114,7 +115,7 @@ function drop(ev){
     newEffectController += numEffect;
     newEffectController += "\"><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
     newEffectController += numEffect;
-    newEffectController += "\"></label><img class=\"effect\" src=\"emoji/";
+    newEffectController += "\"><img class=\"effect\" src=\"emoji/";
     newEffectController += emoji.file;
     newEffectController += "\"/><div class=\"slider-range\" id=\"slider-range-";
     newEffectController += numEffect;
@@ -123,26 +124,24 @@ function drop(ev){
     var effectControllerContainer = document.getElementById("effectList");
     effectControllerContainer.innerHTML += newEffectController;
 
-    numEffect++;
     refreshHandler();
 }
 
 function addText(){
     var inputText = document.getElementById("inputText");
+    var numEffect = effectList.length;
     effectList[numEffect] = {
         type: "txt",
         text: inputText.value,
         begin: $("#previewer")[0].currentTime,
         end: $("#previewer")[0].duration
     };
-    var effectID = "effect" + numEffect++;
+    var effectID = "effect" + numEffect;
     var newEffect = "<div id=\"";
     newEffect += effectID;
     newEffect += "\" class=\"ui-widget-content \" style=\"padding: 10px\"><i class='hander'></i><span font-size=100% >";
     newEffect += inputText.value;
     newEffect += "</span></div>";
-    
-    inputText.value = "";
     
     var effectContainer = document.getElementById("effect-container");
     effectContainer.innerHTML += newEffect;
@@ -152,7 +151,39 @@ function addText(){
                           top: effectContainer.clientHeight / 2,
                           left: effectContainer.clientWidth / 2
                           });
+    
+    var newEffectController = "<li id =\"eddectController";
+    newEffectController += numEffect;
+    newEffectController += "\"><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
+    newEffectController += numEffect;
+    newEffectController += "\"/><label>";
+    newEffectController += inputText.value;
+    newEffectController += "</label><div class=\"slider-range\" id=\"slider-range-";
+    newEffectController += numEffect;
+    newEffectController += "\" ></div></li>";
+    
+    var effectControllerContainer = document.getElementById("effectList");
+    effectControllerContainer.innerHTML += newEffectController;
+
+    inputText.value = "";
     refreshHandler();
+}
+
+function doEdit(){
+    for(var index=0; index<effectList.length; index++){
+        effectList[index].top = $("#effect" + index)[0].offsetTop;
+        effectList[index].left = $("#effect" + index)[0].offsetLeft;
+        effectList[index].width = $("#effect" + index)[0].clientWidth;
+        effectList[index].height = $("#effect" + index)[0].clientHeight;
+        effectList[index].zorder = $("#effect" + index)[0].style.zIndex;
+    }
+    
+    var file = getQueryString("file");
+    effectList.push({type:"mov", file:file?file:defaultVideo});
+    
+    var script = JSON.stringify(effectList);
+    var jumpUrl = "edit.php?script=" + script;
+    window.location.href = jumpUrl;
 }
 
 var lastChangeTime = 0;
