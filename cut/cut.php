@@ -20,7 +20,7 @@
         
         $parts = parse_url($video);
         
-        $file = substr_replace($parts["path"], "_".$x, strlen($parts["path"]) - 4, 0);
+        $file = substr_replace($parts["path"], "_".$x, - 4, 0);
         
         $command = "ffmpeg ".$segments[$x]." -i ".$video." -c copy -movflags faststart ".$file." 2>&1";
         
