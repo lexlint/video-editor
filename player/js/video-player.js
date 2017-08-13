@@ -20,11 +20,10 @@
 		var playpause = document.getElementById('playpause');
 		var stop = document.getElementById('stop');
 		var mute = document.getElementById('mute');
-		var volinc = document.getElementById('volinc');
-		var voldec = document.getElementById('voldec');
 		var progress = document.getElementById('progress');
 		var progressBar = document.getElementById('progress-bar');
 		var fullscreen = document.getElementById('fs');
+        var volumeSlider = document.getElementById('volume-slider');
 
 		// If the browser doesn't support the progress element, set its state for some different styling
 		var supportsProgress = (document.createElement('progress').max !== undefined);
@@ -36,31 +35,15 @@
 		if (!fullScreenEnabled) {
 			fullscreen.style.display = 'none';
 		}
-
-		// Check the volume
-		var checkVolume = function(dir) {
-			if (dir) {
-				var currentVolume = Math.floor(video.volume * 10) / 10;
-				if (dir === '+') {
-					if (currentVolume < 1) video.volume += 0.1;
-				}
-				else if (dir === '-') {
-					if (currentVolume > 0) video.volume -= 0.1;
-				}
-				// If the volume has been turned off, also set it as muted
-				// Note: can only do this with the custom control set as when the 'volumechange' event is raised, there is no way to know if it was via a volume or a mute change
-				if (currentVolume <= 0) video.muted = true;
-				else video.muted = false;
-			}
-			changeButtonState('mute');
-		}
-
-		// Change the volume
-		var alterVolume = function(dir) {
-			checkVolume(dir);
-		}
-
-		// Set the video container's fullscreen state
+ 
+ var changeVolume = function(volume){
+ video.volume = volume / 100;
+ 
+ if (volume <= 0) video.muted = true;
+ else video.muted = false;
+ changeButtonState('mute');
+ }
+ 		// Set the video container's fullscreen state
 		var setFullscreenData = function(state) {
 			videoContainer.setAttribute('data-fullscreen', !!state);
 			// Set the fullscreen button's 'data-state' which allows the correct button image to be set via CSS
@@ -133,7 +116,7 @@
 				changeButtonState('playpause');
 			}, false);
 			video.addEventListener('volumechange', function() {
-				checkVolume();
+				//checkVolume();
 			}, false);
 
 			// Add events for all buttons			
@@ -154,12 +137,6 @@
 				video.muted = !video.muted;
 				changeButtonState('mute');
 			});
-			volinc.addEventListener('click', function(e) {
-				alterVolume('+');
-			});
-			voldec.addEventListener('click', function(e) {
-				alterVolume('-');
-			});
 			fs.addEventListener('click', function(e) {
 				handleFullscreen();
 			});
@@ -178,6 +155,12 @@
 				var pos = (e.pageX  - (this.offsetLeft + this.offsetParent.offsetLeft)) / this.offsetWidth;
 				video.currentTime = pos * video.duration;
 			});
+ 
+            volumeSlider.addEventListener('mousemove', function(e){
+                                          if(e.buttons != 0){
+                                          changeVolume(document.getElementById("volume-slider").value);
+                                          }
+            });
 
 			// Listen for fullscreen change events (from other controls, e.g. right clicking on the video itself)
 			document.addEventListener('fullscreenchange', function(e) {
