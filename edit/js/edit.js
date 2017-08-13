@@ -170,11 +170,12 @@ function addText(){
 }
 
 function doEdit(){
+    var scale =  $( "#previewer" )[0].videoHeight/$( "#previewer" )[0].clientHeight;
     for(var index=0; index<effectList.length; index++){
-        effectList[index].top = $("#effect" + index)[0].offsetTop;
-        effectList[index].left = $("#effect" + index)[0].offsetLeft;
-        effectList[index].width = $("#effect" + index)[0].clientWidth;
-        effectList[index].height = $("#effect" + index)[0].clientHeight;
+        effectList[index].top = $("#effect" + index)[0].offsetTop * scale;
+        effectList[index].left = $("#effect" + index)[0].offsetLeft * scale;
+        effectList[index].width = $("#effect" + index)[0].clientWidth * scale;
+        effectList[index].height = $("#effect" + index)[0].clientHeight * scale;
         effectList[index].zorder = $("#effect" + index)[0].style.zIndex;
     }
     
