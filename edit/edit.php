@@ -60,7 +60,7 @@ ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.
     
     foreach ($txts as $txt) {
         $vcount ++;
-        $txt_overlay .= "[dest".($vcount-1)."] drawtext=fontfile=/Library/Fonts/Songti.ttc:text=".($txt->text).":fontcolor=red:fontsize=48:x=".($txt->left).":y=".($txt->top).":enable='between(t,".($txt->begin).",".($txt->end).")'[dest".$vcount."];";
+        $txt_overlay .= "[dest".($vcount-1)."] drawtext=fontfile=../fonts/Songti.ttc:text=".($txt->text).":fontcolor=red:fontsize=48:x=".($txt->left).":y=".($txt->top).":enable='between(t,".($txt->begin).",".($txt->end).")'[dest".$vcount."];";
     }
     
     $filter = substr_replace($img_src.$img_overlay.$txt_overlay, "\"", -1);
