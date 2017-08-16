@@ -139,7 +139,7 @@ function addText(){
     var effectID = "effect" + numEffect;
     var newEffect = "<div id=\"";
     newEffect += effectID;
-    newEffect += "\" class=\"ui-widget-content \" style=\"padding: 10px\"><i class='hander'></i><span font-size=100% >";
+    newEffect += "\" class=\"ui-widget-content \" style=\"padding: 10px\"><i class='hander'></i><span class=\"overlay-text\" font-size=100% >";
     newEffect += inputText.value;
     newEffect += "</span></div>";
     
@@ -204,3 +204,32 @@ function initEmojiList(){
     document.getElementById("emojiList").innerHTML += content;
 }
 
+function setBGM(){
+    var musicCapture = document.getElementById("music-capture");
+    var bgm = document.getElementById("bgm");
+    if(musicCapture && bgm){
+        if(musicCapture.src === ""){
+            alert("没有检测到音乐！");
+        }
+        else if(bgm.src === musicCapture.src){
+            alert("已经设置过了！");
+        }
+        else{
+            bgm.src = musicCapture.src;
+            var bgmStatus = document.getElementById("bgm-status");
+            var bgmTip = document.getElementById("bgm-tip");
+            bgmStatus.innerText = "已设置";
+            bgmTip.innerText = musicCapture.src;
+        }
+    }
+}
+
+function resetBGM(){
+    var bgm = document.getElementById("bgm");
+    var bgmStatus = document.getElementById("bgm-status");
+    var bgmTip = document.getElementById("bgm-tip");
+    bgm.src = "";
+    bgmStatus.innerText = "无";
+    bgmTip.innerText = "";
+   
+}

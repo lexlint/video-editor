@@ -36,6 +36,22 @@ video.previewer {
     height: 540px;
 }
 
+video::-webkit-media-controls-volume-slider {
+    display:none;
+}
+
+video::-webkit-media-controls-mute-button {
+    display:none;
+}
+
+audio::-webkit-media-controls-volume-slider {
+    display:none;
+}
+
+audio::-webkit-media-controls-mute-button {
+    display:none;
+}
+
 img.emoji {
     width: 5%;
     height: 5%;
@@ -46,7 +62,7 @@ img.effect {
     height: 3%;
 }
 
-span {
+span.overlay-text {
     font-size:100%;
     color:#ff0000
 }
@@ -56,4 +72,28 @@ span {
     top: 0px;
     left: 0px;
     background-color: rgba(0,0,0,0);
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: auto;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }

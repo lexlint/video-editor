@@ -24,7 +24,8 @@
         video.src = file?file:defaultVideo;
         
         video.autoplay = true;
-        video.muted = true;
+        video.muted = false;
+        video.volume = 1;
 
         initEmojiList();
         };
@@ -33,7 +34,8 @@
  <body>
     <div id="editor-container">
         <div id="video-container">
-            <video id="previewer" class="previewer" controls="controls" ontimeupdate="onVideoTimeUpdate()">仅支持H264格式MP4</video>
+            <video id="previewer" class="previewer" controls="controls" controlsList="nodownload" ontimeupdate="onVideoTimeUpdate()">请使用Chrome 60.0以上版本</video>
+            <audio id="bgm">请使用Chrome 60.0以上版本</audio>
         </div>
         <div id="effect-container" class='effect-container box box-5' ondragover="allowDrop(event)" ondrop="drop(event)">
         </div>
@@ -46,7 +48,22 @@
         <textarea id="inputText" rows="3" cols="30"></textarea>
         <button class="addText" onclick="addText()">增加文字</button>
     </div>
-    <input type="range"><label>背景音乐：</label>
+    <div>
+        <span class="tooltip">背景音乐：
+            <span id="bgm-status">无</span>
+            <span id="bgm-tip" class="tooltiptext"></span>
+        </span>
+        <input type="range">
+        <button id="bgm-reset" onclick="resetBGM()">重置</button>
+        <p>
+        <span class="tooltip">
+            <span id="music-status">检测中...</span>
+            <span id="music-tip" class="tooltiptext"></span>
+        </span>
+        <p>
+        <audio id="music-capture" controls="controls" controlsList="nodownload"></audio>
+        <button id="bgm-set" onclick="setBGM()">设为背景音乐</button>
+    </div>
     <p>
     <button class="doEdit" onclick="doEdit()">提交编辑</button>
     <iframe src="http://www.xiami.com/search" width=100% height=500></iframe>
