@@ -31,25 +31,66 @@ i.hander {
     opacity: 0;
 }
 
-video.previewer {
-    width: 960px;
-    height: 540px;
+#video-container{
+    position: relative;
+    width: 60%;                 /*维持客户区16:9的比例*/
+    padding-top: 33.75%;        /*维持客户区16:9的比例*/
+    height:0px;                 /*维持客户区16:9的比例*/
+    margin-bottom: 62px;        /*留给控制栏的高度*/
 }
 
-video::-webkit-media-controls-volume-slider {
-    display:none;
+video.previewer {
+    position: absolute;
+    top: 0; left: 0;
+    width:100%;                 /*填充满container的客户区*/
+    height:100%;                /*填充满container的客户区*/
+}
+
+video::-webkit-media-controls-panel {
+    display: flex !important;   /*常显控制栏*/
+    opacity: 1 !important;      /*常显控制栏*/
+    position: relative;
+    top:31px;                   /*偏移到视频区外*/
+    height:62px;                /*修改控制栏高度*/
+}
+
+video::-webkit-media-controls-play-button{
+    position: relative;
+    top:-16px;
+}
+
+video::-webkit-media-controls-current-time-display {
+    position: relative;
+    top:-16px;
+}
+
+video::-webkit-media-controls-time-remaining-display {
+    position: relative;
+    top:-16px;
 }
 
 video::-webkit-media-controls-mute-button {
-    display:none;
+    position: relative;
+    top:-16px;
+    left:50px;
 }
 
-audio::-webkit-media-controls-volume-slider {
-    display:none;
+video::-webkit-media-controls-volume-slider {
+    position: relative;
+    top:-16px;
+    left:40px;
 }
 
-audio::-webkit-media-controls-mute-button {
-    display:none;
+video::-webkit-media-controls-fullscreen-button {
+    display: none;
+}
+
+video::-webkit-media-controls-timeline {
+    display: block;
+    position: absolute;
+    top:46px;
+    width:100%;
+    left:-18px;
 }
 
 img.emoji {

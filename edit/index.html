@@ -1,72 +1,74 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
- <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>视频编辑</title>
-	<meta name="Generator" content="EditPlus">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <!-- 引用css -->
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
-	<!-- 引用js -->
-    <script src="./jquery/jquery-1.10.2.js"></script>
-    <script src="./jquery/jquery-ui-1.11.0.js"></script>
-    <script type="text/javascript" src="js/drag.js"></script>
-    <script type="text/javascript" src="js/edit.js"></script>
-	
-	<script>
-        var defaultVideo = "../video/lol3.mp4";
-
-        window.onload = function () {
-        var video = document.getElementById("previewer");
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>视频编辑</title>
+        <meta name="Generator" content="EditPlus"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <!-- 引用css -->
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
+        <!-- 引用js -->
+        <script type="text/javascript" src="./jquery/jquery-1.10.2.js"></script>
+        <script type="text/javascript" src="./jquery/jquery-ui-1.11.0.js"></script>
+        <script type="text/javascript" src="js/drag.js"></script>
+        <script type="text/javascript" src="js/edit.js"></script>
         
-        var file = getQueryString("file");
-        video.src = file?file:defaultVideo;
-        
-        video.autoplay = true;
-        video.muted = false;
-        video.volume = 1;
-
-        initEmojiList();
-        };
-	</script>
- </head>
- <body>
-    <div id="editor-container">
-        <div id="video-container">
-            <video id="previewer" class="previewer" controls="controls" controlsList="nodownload" ontimeupdate="onVideoTimeUpdate()">请使用Chrome 60.0以上版本</video>
-            <audio id="bgm">请使用Chrome 60.0以上版本</audio>
+        <script>
+            var defaultVideo = "../video/lol3.mp4";
+            
+            window.onload = function () {
+                var video = document.getElementById("previewer");
+                
+                var file = getQueryString("file");
+                video.src = file?file:defaultVideo;
+                
+                video.muted = false;
+                video.volume = 1.0;
+                
+                initEmojiList();
+            };
+        </script>
+    </head>
+    <body>
+        <div id="page-container">
+            <div id="editor-container">
+                <div id="video-container">
+                    <video id="previewer" class="previewer" controls="controls" controlsList="nodownload" ontimeupdate="onVideoTimeUpdate()">请使用Chrome 60.0以上版本</video>
+                    <audio id="bgm">请使用Chrome 60.0以上版本</audio>
+                </div>
+                <!--div id="effect-container" class='effect-container box box-5' ondragover="allowDrop(event)" ondrop="drop(event)"></div-->
+            </div>
+            
+            <label>特效列表：</label>
+            <ul id="effectList"></ul>
+            
+            <label>表情列表：</label>
+            <div id="emojiList"></div>
+            
+            <div>
+                <textarea id="inputText" rows="3" cols="30"></textarea>
+                <button class="addText" onclick="addText()">增加文字</button>
+            </div>
+            
+            <div>
+                <span class="tooltip">背景音乐：
+                    <span id="bgm-status">无</span>
+                    <span id="bgm-tip" class="tooltiptext"></span>
+                </span>
+                <input type="range"/>
+                <button id="bgm-reset" onclick="resetBGM()">重置</button>
+                <p>
+                <span class="tooltip">
+                    <span id="music-status">检测中...</span>
+                    <span id="music-tip" class="tooltiptext"></span>
+                </span>
+                <p>
+                <audio id="music-capture" controls="controls" controlsList="nodownload"></audio>
+                <button id="bgm-set" onclick="setBGM()">设为背景音乐</button>
+            </div>
+            
+            <button class="doEdit" onclick="doEdit()">提交编辑</button>
         </div>
-        <div id="effect-container" class='effect-container box box-5' ondragover="allowDrop(event)" ondrop="drop(event)">
-        </div>
-    </div>
-    <label>特效列表：</label>
-    <ul id="effectList"></ul>
-    <label>表情列表：</label>
-    <div id="emojiList"></div>
-    <div>
-        <textarea id="inputText" rows="3" cols="30"></textarea>
-        <button class="addText" onclick="addText()">增加文字</button>
-    </div>
-    <div>
-        <span class="tooltip">背景音乐：
-            <span id="bgm-status">无</span>
-            <span id="bgm-tip" class="tooltiptext"></span>
-        </span>
-        <input type="range">
-        <button id="bgm-reset" onclick="resetBGM()">重置</button>
-        <p>
-        <span class="tooltip">
-            <span id="music-status">检测中...</span>
-            <span id="music-tip" class="tooltiptext"></span>
-        </span>
-        <p>
-        <audio id="music-capture" controls="controls" controlsList="nodownload"></audio>
-        <button id="bgm-set" onclick="setBGM()">设为背景音乐</button>
-    </div>
-    <p>
-    <button class="doEdit" onclick="doEdit()">提交编辑</button>
-    <iframe src="http://www.xiami.com/search" width=100% height=500></iframe>
-
- </body>
- </html>
+    </body>
+</html>
