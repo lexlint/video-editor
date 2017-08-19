@@ -1,3 +1,9 @@
+window.onload = function () {
+    $( "#tools-tabs" ).tabs();
+    initVideoPlayer();
+    initEmojiList();
+};
+
 var emojiList = [
                  {id:"zm", file:"zm.png", animate:false},
                  {id:"wx", file:"wx.png", animate:false},
@@ -13,6 +19,8 @@ var effectList = [
     //{type:"img", file:"cy.png", begin:10, end:20},
 ];
 
+var defaultVideo = "../video/lol3.mp4";
+
 Date.prototype.Format = function (fmt) {
     var o = {
         "h+": this.getUTCHours(),                   //小时
@@ -25,6 +33,79 @@ Date.prototype.Format = function (fmt) {
         }
     }
     return fmt;
+}
+
+function initVideoPlayer(){
+    var video = document.getElementById("video-previewer");
+    
+    var file = getQueryString("file");
+    video.src = file?file:defaultVideo;
+    
+    video.muted = false;
+    video.volume = 1.0;
+    
+    video.ontimeupdate = function (){onVideoTimeUpdate();};
+    video.onloadedmetadata = function (){onVideoMetadata();};
+    video.onplaying = function(){onVideoPlaying();};
+    video.onpause = function(){onVideoPause();};
+    video.onseeking = function(){onVideoSeeking();};
+    video.onseeked = function(){onVideoSeeked();};
+    video.onvolumechange = function(){onVideoVolumechange();};
+}
+
+var lastChangeTime = 0;
+function onVideoTimeUpdate(){
+    var currentTime = $( "#video-previewer" )[0].currentTime;
+    if(Math.abs(currentTime - lastChangeTime) > 0.2) {
+        lastChangeTime = currentTime;
+        refreshEffect();
+    }
+}
+
+function onVideoMetadata(){
+    $("#effect-previewer")[0].style.width = toPercent(($( "#video-previewer" )[0].videoWidth / $( "#video-previewer" )[0].videoHeight)/(16/9));
+}
+
+function onVideoPlaying(){
+    var bgm = $("#bgm")[0];
+    if(bgm.readyState != 0){
+        bgm.play();
+    }
+}
+
+function onVideoPause(){
+    var bgm = $("#bgm")[0];
+    if(bgm.readyState != 0){
+        bgm.pause();
+    }
+}
+
+function onVideoSeeking(){
+    var bgm = $("#bgm")[0];
+    if(bgm.readyState != 0){
+        bgm.pause();
+    }
+}
+
+function onVideoSeeked(){
+    var bgm = $("#bgm")[0];
+    if(bgm.readyState != 0){
+        var video = $("#video-previewer")[0];
+        bgm.currentTime = video.currentTime % bgm.duration;
+    }
+}
+
+function onVideoVolumechange(){
+    setBGMVolume();
+}
+
+function setBGMVolume(){
+    var bgm = $("#bgm")[0];
+    if(bgm.readyState != 0){
+        var video = $("#video-previewer")[0];
+        var percent = $("#bgm-volume")[0].valueAsNumber / 100;
+        bgm.volume = video.volume * percent;
+    }
 }
 
 function getQueryString(name) {
@@ -185,23 +266,10 @@ function doEdit(){
     window.location.href = jumpUrl;
 }
 
-var lastChangeTime = 0;
-function onVideoTimeUpdate(){
-    var currentTime = $( "#video-previewer" )[0].currentTime;
-    if(Math.abs(currentTime - lastChangeTime) > 1) {
-        lastChangeTime = currentTime;
-        refreshEffect();
-    }
-}
-
 function toPercent(data){
     var strData = parseFloat(data)*100;
     var ret = strData.toString()+"%";
     return ret;
-}
-
-function onVideoMetadata(){
-    $("#effect-previewer")[0].style.width = toPercent(($( "#video-previewer" )[0].videoWidth / $( "#video-previewer" )[0].videoHeight)/(16/9));
 }
 
 function initEmojiList(){

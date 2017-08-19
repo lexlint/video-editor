@@ -13,30 +13,13 @@
         <script type="text/javascript" src="./jquery/jquery-ui-1.11.0.js"></script>
         <script type="text/javascript" src="js/drag.js"></script>
         <script type="text/javascript" src="js/edit.js"></script>
-        
-        <script>
-            var defaultVideo = "../video/lol3.mp4";
-            
-            window.onload = function () {
-                var video = document.getElementById("video-previewer");
-                
-                var file = getQueryString("file");
-                video.src = file?file:defaultVideo;
-                
-                video.muted = false;
-                video.volume = 1.0;
-                
-                initEmojiList();
-                $( "#tools-tabs" ).tabs();
-            };
-        </script>
     </head>
     <body>
         <div id="page-container">
             <div id="editor-container">
                 <div id="video-container">
-                    <video id="video-previewer" controls="controls" controlsList="nodownload" ontimeupdate="onVideoTimeUpdate()" onloadedmetadata="onVideoMetadata()">请使用Chrome 60.0以上版本</video>
-                    <audio id="bgm">请使用Chrome 60.0以上版本</audio>
+                    <video id="video-previewer" controls="controls" controlsList="nodownload">请使用Chrome 60.0以上版本</video>
+                    <audio id="bgm" loop="loop">请使用Chrome 60.0以上版本</audio>
                 </div>
                 <div id="effect-container">
                     <div id="effect-area">
@@ -54,7 +37,7 @@
                         <span id="bgm-status">未设置</span>
                         <span id="bgm-tip" class="tooltiptext"></span>
                     </span>
-                    <input id="bgm-volume" type="range"/>
+                    <input id="bgm-volume" type="range" onchange="setBGMVolume()"/>
                     <button id="bgm-reset" onclick="resetBGM()">重置</button>
                     <div id="commit-container">
                         <button id="commit" onclick="doEdit()">提交编辑</button>
