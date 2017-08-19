@@ -27,6 +27,7 @@
                 video.volume = 1.0;
                 
                 initEmojiList();
+                $( "#tools-tabs" ).tabs();
             };
         </script>
     </head>
@@ -37,38 +38,49 @@
                     <video id="previewer" class="previewer" controls="controls" controlsList="nodownload" ontimeupdate="onVideoTimeUpdate()">请使用Chrome 60.0以上版本</video>
                     <audio id="bgm">请使用Chrome 60.0以上版本</audio>
                 </div>
-                <!--div id="effect-container" class='effect-container box box-5' ondragover="allowDrop(event)" ondrop="drop(event)"></div-->
+                <div id="effect-container">
+                    <div id="effect-previewer" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+                </div>
+                <ul id="effectList">
+                </ul>
             </div>
             
-            <label>特效列表：</label>
-            <ul id="effectList"></ul>
-            
-            <label>表情列表：</label>
-            <div id="emojiList"></div>
-            
-            <div>
-                <textarea id="inputText" rows="3" cols="30"></textarea>
-                <button class="addText" onclick="addText()">增加文字</button>
+            <div id="tools-container">
+                <div>
+                    <span class="tooltip">背景音乐：
+                        <span id="bgm-status">无</span>
+                        <span id="bgm-tip" class="tooltiptext"></span>
+                    </span>
+                    <input type="range"/>
+                    <button id="bgm-reset" onclick="resetBGM()">重置</button>
+                    <button class="doEdit" onclick="doEdit()">提交编辑</button>
+                </div>
+                
+                <div id="tools-tabs">
+                    <ul>
+                        <li><a href="#tools-img">添加表情</a></li>
+                        <li><a href="#tools-text">添加文字</a></li>
+                        <li><a href="#tools-music">添加音乐</a></li>
+                    </ul>
+                    <div id="tools-img">
+                        <label>表情列表：</label>
+                        <div id="emojiList"></div>
+                    </div>
+                    <div id="tools-text">
+                        <textarea id="inputText" rows="3" cols="30"></textarea>
+                        <button class="addText" onclick="addText()">增加文字</button>
+                    </div>
+                    <div id="tools-music">
+                        <span class="tooltip">
+                            <span id="music-status">检测中...</span>
+                            <span id="music-tip" class="tooltiptext"></span>
+                        </span>
+                        <p>
+                        <audio id="music-capture" controls="controls" controlsList="nodownload"></audio>
+                        <button id="bgm-set" onclick="setBGM()">设为背景音乐</button>
+                    </div>
+                </div>
             </div>
-            
-            <div>
-                <span class="tooltip">背景音乐：
-                    <span id="bgm-status">无</span>
-                    <span id="bgm-tip" class="tooltiptext"></span>
-                </span>
-                <input type="range"/>
-                <button id="bgm-reset" onclick="resetBGM()">重置</button>
-                <p>
-                <span class="tooltip">
-                    <span id="music-status">检测中...</span>
-                    <span id="music-tip" class="tooltiptext"></span>
-                </span>
-                <p>
-                <audio id="music-capture" controls="controls" controlsList="nodownload"></audio>
-                <button id="bgm-set" onclick="setBGM()">设为背景音乐</button>
-            </div>
-            
-            <button class="doEdit" onclick="doEdit()">提交编辑</button>
         </div>
     </body>
 </html>

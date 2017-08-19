@@ -1,22 +1,8 @@
-*{margin:0;padding:0;}
-li{list-style:none outside none;}
 body {
 	background: #aaa;
-	font-family:"å¾®è½¯é›…é»‘", "é»‘ä½“"
-	padding:20px 0 0px;
-}
-
-.box {
-    width: 960px;
-    margin: 0 auto 20px;
-    height: 500px;
-    background:#;
-    border: 1px solid #000;
-    background-color: rgba(0,0,0,0);
 }
 
 .slider-range{
-    width: 960px;
 }
 
 i.hander {
@@ -29,6 +15,19 @@ i.hander {
     -moz-opacity:0;  
     -khtml-opacity: 0;  
     opacity: 0;
+}
+
+#page-container{
+    position: relative;
+    max-width:1200px;
+    min-width:1024px;
+    margin:auto;
+    width:100%;
+    height:100%;
+    background-color:#666;
+}
+
+#editor-container{
 }
 
 #video-container{
@@ -44,6 +43,17 @@ video.previewer {
     top: 0; left: 0;
     width:100%;                 /*填充满container的客户区*/
     height:100%;                /*填充满container的客户区*/
+}
+
+#effect-container{
+    top: 0px;
+    left: 0px;
+    background-color: rgba(0,0,0,0);
+    position: absolute;
+    width: 60%;                 /*维持客户区16:9的比例*/
+    padding-top: 33.75%;        /*维持客户区16:9的比例*/
+    height:0px;                 /*维持客户区16:9的比例*/
+    margin-bottom: 62px;        /*留给控制栏的高度*/
 }
 
 video::-webkit-media-controls-panel {
@@ -106,13 +116,6 @@ img.effect {
 span.overlay-text {
     font-size:100%;
     color:#ff0000
-}
-
-.effect-container{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    background-color: rgba(0,0,0,0);
 }
 
 .tooltip {
