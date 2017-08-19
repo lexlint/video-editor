@@ -26,7 +26,6 @@ $.fn.extend({
 		}else{
 			hander = $this.find(opt.hander);
 		}
-		
 			
 		//---初始化
 		//father.css({"position":"relative","overflow":"hidden"});

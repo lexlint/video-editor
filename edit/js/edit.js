@@ -42,7 +42,7 @@ function drag(ev){
 }
 
 function refreshEffect(){
-    var currentTime = $( "#previewer" )[0].currentTime;
+    var currentTime = $( "#video-previewer" )[0].currentTime;
     for(var index = 0; index < effectList.length; index ++){
         if(effectList[index].begin > currentTime || effectList[index].end < currentTime){
             $("#effect"+ index)[0].style.visibility = "hidden";
@@ -68,7 +68,7 @@ function refreshHandler(){
         $( "#slider-range-" + i ).slider({
                                         range: true,
                                         min: 0,
-                                        max: $( "#previewer" )[0].duration,
+                                        max: $( "#video-previewer" )[0].duration,
                                         values: [ effectList[i].begin, effectList[i].end ],
                                         slide: function( event, ui ) {
                                             var sliderID = ui.handle.parentNode.id;
@@ -90,8 +90,8 @@ function drop(ev){
     effectList[numEffect] = {
         type: "img",
         file: emoji.file,
-        begin: $( "#previewer" )[0].currentTime,
-        end: $( "#previewer" )[0].duration,
+        begin: $( "#video-previewer" )[0].currentTime,
+        end: $( "#video-previewer" )[0].duration,
         animate: emoji.animate
     };
     
@@ -102,8 +102,7 @@ function drop(ev){
     newEffect += emoji.file;
     newEffect += "\"></div>";
     
-    var effectContainer = document.getElementById("effect-container");
-    effectContainer.innerHTML += newEffect;
+    $( "#effect-previewer" )[0].innerHTML += newEffect;
     
     $("#" + effectID).css({
                           position: 'absolute',
@@ -111,9 +110,9 @@ function drop(ev){
                           left: ev.offsetX
                           });
     
-    var newEffectController = "<li id =\"eddectController";
+    var newEffectController = "<li id =\"effectController";
     newEffectController += numEffect;
-    newEffectController += "\"><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
+    newEffectController += "\" class=\"effectController\"><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
     newEffectController += numEffect;
     newEffectController += "\"><img class=\"effect\" src=\"emoji/";
     newEffectController += emoji.file;
@@ -133,8 +132,8 @@ function addText(){
     effectList[numEffect] = {
         type: "txt",
         text: inputText.value,
-        begin: $("#previewer")[0].currentTime,
-        end: $("#previewer")[0].duration
+        begin: $("#video-previewer")[0].currentTime,
+        end: $("#video-previewer")[0].duration
     };
     var effectID = "effect" + numEffect;
     var newEffect = "<div id=\"";
@@ -143,16 +142,15 @@ function addText(){
     newEffect += inputText.value;
     newEffect += "</span></div>";
     
-    var effectContainer = document.getElementById("effect-container");
-    effectContainer.innerHTML += newEffect;
+    $( "#effect-previewer" )[0].innerHTML += newEffect;
     
     $("#" + effectID).css({
                           position: 'absolute',
-                          top: effectContainer.clientHeight / 2,
-                          left: effectContainer.clientWidth / 2
+                          top: $( "#effect-previewer" )[0].clientHeight / 2,
+                          left: $( "#effect-previewer" )[0].clientWidth / 2
                           });
     
-    var newEffectController = "<li id =\"eddectController";
+    var newEffectController = "<li id =\"effectController";
     newEffectController += numEffect;
     newEffectController += "\"><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
     newEffectController += numEffect;
@@ -170,7 +168,7 @@ function addText(){
 }
 
 function doEdit(){
-    var scale =  $( "#previewer" )[0].videoHeight/$( "#previewer" )[0].clientHeight;
+    var scale =  $( "#video-previewer" )[0].videoHeight/$( "#video-previewer" )[0].clientHeight;
     for(var index=0; index<effectList.length; index++){
         effectList[index].top = $("#effect" + index)[0].offsetTop * scale;
         effectList[index].left = $("#effect" + index)[0].offsetLeft * scale;
@@ -189,11 +187,21 @@ function doEdit(){
 
 var lastChangeTime = 0;
 function onVideoTimeUpdate(){
-    var currentTime = $( "#previewer" )[0].currentTime;
+    var currentTime = $( "#video-previewer" )[0].currentTime;
     if(Math.abs(currentTime - lastChangeTime) > 1) {
         lastChangeTime = currentTime;
         refreshEffect();
     }
+}
+
+function toPercent(data){
+    var strData = parseFloat(data)*100;
+    var ret = strData.toString()+"%";
+    return ret;
+}
+
+function onVideoMetadata(){
+    $("#effect-previewer")[0].style.width = toPercent(($( "#video-previewer" )[0].videoWidth / $( "#video-previewer" )[0].videoHeight)/(16/9));
 }
 
 function initEmojiList(){

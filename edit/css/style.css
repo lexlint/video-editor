@@ -1,5 +1,6 @@
-body {
+html, body {
 	background: #aaa;
+    height:100%;
 }
 
 .slider-range{
@@ -19,49 +20,86 @@ i.hander {
 
 #page-container{
     position: relative;
-    max-width:1200px;
+    max-width:1440px;
     min-width:1024px;
-    margin:auto;
+    margin:10px auto;
     width:100%;
     height:100%;
     background-color:#666;
 }
 
 #editor-container{
+    position: relative;
+    width: 60%;
+    height:100%;
+    float: left;
 }
 
 #video-container{
     position: relative;
-    width: 60%;                 /*维持客户区16:9的比例*/
-    padding-top: 33.75%;        /*维持客户区16:9的比例*/
-    height:0px;                 /*维持客户区16:9的比例*/
-    margin-bottom: 62px;        /*留给控制栏的高度*/
+    width: 100%;
+    padding-top: 56.25%;
+    height:0px;
+    margin-bottom: 62px;
 }
 
-video.previewer {
+#video-previewer {
     position: absolute;
     top: 0; left: 0;
-    width:100%;                 /*填充满container的客户区*/
-    height:100%;                /*填充满container的客户区*/
+    width:100%;
+    height:100%;
 }
 
 #effect-container{
-    top: 0px;
-    left: 0px;
-    background-color: rgba(0,0,0,0);
     position: absolute;
-    width: 60%;                 /*维持客户区16:9的比例*/
-    padding-top: 33.75%;        /*维持客户区16:9的比例*/
-    height:0px;                 /*维持客户区16:9的比例*/
-    margin-bottom: 62px;        /*留给控制栏的高度*/
+    top: 0; left: 0;
+    background-color: rgba(0,0,0,0);
+    width: 100%;
+    padding-top: 56.25%;
+    height:0px;
+}
+
+#effect-area{
+    position: absolute;
+    top: 0; left: 0;
+    width:100%;
+    height:100%;
+}
+
+#effect-previewer{
+    position: relative;
+    width:100%;
+    height:100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#effectList{
+}
+
+#tools-container{
+    float: left;
+    width: 40%;
+}
+
+#bgm-volume{
+    width: 80px;
+}
+
+#commit-container{
+    float: right;
+}
+
+#commit{
+    color:red;
 }
 
 video::-webkit-media-controls-panel {
-    display: flex !important;   /*常显控制栏*/
-    opacity: 1 !important;      /*常显控制栏*/
+    display: flex !important;
+    opacity: 1 !important;
     position: relative;
-    top:31px;                   /*偏移到视频区外*/
-    height:62px;                /*修改控制栏高度*/
+    top:31px;
+    height:62px;
 }
 
 video::-webkit-media-controls-play-button{
@@ -104,8 +142,7 @@ video::-webkit-media-controls-timeline {
 }
 
 img.emoji {
-    width: 5%;
-    height: 5%;
+    width: 10%;
 }
 
 img.effect {
@@ -116,6 +153,21 @@ img.effect {
 span.overlay-text {
     font-size:100%;
     color:#ff0000
+}
+
+ul{
+    -webkit-padding-start:0px;
+}
+
+#effectList-container{
+    max-height:350px;
+    overflow:scroll;
+}
+
+li.effectController{
+    position: relative;
+    width: 100%;
+    overflow:hidden;
 }
 
 .tooltip {

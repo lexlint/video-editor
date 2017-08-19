@@ -18,7 +18,7 @@
             var defaultVideo = "../video/lol3.mp4";
             
             window.onload = function () {
-                var video = document.getElementById("previewer");
+                var video = document.getElementById("video-previewer");
                 
                 var file = getQueryString("file");
                 video.src = file?file:defaultVideo;
@@ -35,25 +35,30 @@
         <div id="page-container">
             <div id="editor-container">
                 <div id="video-container">
-                    <video id="previewer" class="previewer" controls="controls" controlsList="nodownload" ontimeupdate="onVideoTimeUpdate()">请使用Chrome 60.0以上版本</video>
+                    <video id="video-previewer" controls="controls" controlsList="nodownload" ontimeupdate="onVideoTimeUpdate()" onloadedmetadata="onVideoMetadata()">请使用Chrome 60.0以上版本</video>
                     <audio id="bgm">请使用Chrome 60.0以上版本</audio>
                 </div>
                 <div id="effect-container">
-                    <div id="effect-previewer" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+                    <div id="effect-area">
+                        <div id="effect-previewer" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
+                    </div>
                 </div>
-                <ul id="effectList">
-                </ul>
+                <div id="effectList-container">
+                    <ul id="effectList"></ul>
+                </div>
             </div>
             
             <div id="tools-container">
                 <div>
                     <span class="tooltip">背景音乐：
-                        <span id="bgm-status">无</span>
+                        <span id="bgm-status">未设置</span>
                         <span id="bgm-tip" class="tooltiptext"></span>
                     </span>
-                    <input type="range"/>
+                    <input id="bgm-volume" type="range"/>
                     <button id="bgm-reset" onclick="resetBGM()">重置</button>
-                    <button class="doEdit" onclick="doEdit()">提交编辑</button>
+                    <div id="commit-container">
+                        <button id="commit" onclick="doEdit()">提交编辑</button>
+                    </div>
                 </div>
                 
                 <div id="tools-tabs">
@@ -68,7 +73,7 @@
                     </div>
                     <div id="tools-text">
                         <textarea id="inputText" rows="3" cols="30"></textarea>
-                        <button class="addText" onclick="addText()">增加文字</button>
+                        <button onclick="addText()">增加文字</button>
                     </div>
                     <div id="tools-music">
                         <span class="tooltip">
