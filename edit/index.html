@@ -37,7 +37,7 @@
                         <span id="bgm-status">未设置</span>
                         <span id="bgm-tip" class="tooltiptext"></span>
                     </span>
-                    <input id="bgm-volume" type="range" onchange="setBGMVolume()"/>
+                    <input id="bgm-volume" type="range" value=100 onchange="setBGMVolume()"/>
                     <button id="bgm-reset" onclick="resetBGM()">重置</button>
                     <div id="commit-container">
                         <button id="commit" onclick="doEdit()">提交编辑</button>
@@ -59,13 +59,25 @@
                         <button onclick="addText()">增加文字</button>
                     </div>
                     <div id="tools-music">
+                        <label>你可以在下列第三方音乐网站中搜索你想设置为背景的音乐，并在第三方网站进行播放试听，试听成功后本页面会检测到该音乐，可以在下方预览，确认后点击“设为背景音乐”即可。</label>
+                        <p>
+                        <label>关键词：</label>
+                        <input id="search-key" type="text"></input>
+                        <p>
+                        <button id="search-qq" onclick="searchBMG(this.id)">去QQ音乐搜</button>
+                        <button id="search-xiami" onclick="searchBMG(this.id)">去虾米搜</button>
+                        <button id="search-163" onclick="searchBMG(this.id)">去网易云音乐搜</button>
+                        <p>
                         <span class="tooltip">
                             <span id="music-status">检测中...</span>
                             <span id="music-tip" class="tooltiptext"></span>
                         </span>
                         <p>
+                        <label>预览：</label>
                         <audio id="music-capture" controls="controls" controlsList="nodownload"></audio>
+                        <p>
                         <button id="bgm-set" onclick="setBGM()">设为背景音乐</button>
+                        <p>
                     </div>
                 </div>
             </div>

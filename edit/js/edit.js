@@ -5,13 +5,7 @@ window.onload = function () {
 };
 
 var emojiList = [
-                 {id:"zm", file:"zm.png", animate:false},
-                 {id:"wx", file:"wx.png", animate:false},
-                 {id:"ll", file:"ll.png", animate:false},
-                 {id:"kl", file:"kl.png", animate:false},
-                 {id:"cy", file:"cy.png", animate:false},
-                 {id:"tt", file:"tt.png", animate:true},
-                 {id:"clock", file:"clock.png", animate:true}
+    //{id:"zm", file:"zm.png", animate:false},
 ];
 
 var effectList = [
@@ -33,6 +27,27 @@ Date.prototype.Format = function (fmt) {
         }
     }
     return fmt;
+}
+
+function initEmojiList(){
+    var oReq = new XMLHttpRequest();
+    oReq.open("GET", "./get-emoji.php", true);
+    oReq.onreadystatechange = function (oEvent) {
+        if (oReq.readyState === 4) {
+            if (oReq.status === 200) {
+                emojiList = JSON.parse(oReq.responseText);
+                
+                var content = "";
+                for (var i = 0; i < emojiList.length; i ++){
+                    content += "<img id='" + emojiList[i].id +"' class='emoji' src='emoji/" + emojiList[i].file +"' draggable='true' ondragstart='drag(event)'></img>"
+                }
+                document.getElementById("emojiList").innerHTML += content;
+            } else {
+                console.log("Error", oReq.statusText);
+            }
+        }
+    };
+    oReq.send(null);
 }
 
 function initVideoPlayer(){
@@ -272,14 +287,6 @@ function toPercent(data){
     return ret;
 }
 
-function initEmojiList(){
-    var content = "";
-    for (var i = 0; i < emojiList.length; i ++){
-        content += "<img id='" + emojiList[i].id +"' class='emoji' src='emoji/" + emojiList[i].file +"' draggable='true' ondragstart='drag(event)'></img>"
-    }
-    document.getElementById("emojiList").innerHTML += content;
-}
-
 function setBGM(){
     var musicCapture = document.getElementById("music-capture");
     var bgm = document.getElementById("bgm");
@@ -296,6 +303,7 @@ function setBGM(){
             var bgmTip = document.getElementById("bgm-tip");
             bgmStatus.innerText = "已设置";
             bgmTip.innerText = musicCapture.src;
+            alert("设置成功！");
         }
     }
 }
@@ -308,4 +316,15 @@ function resetBGM(){
     bgmStatus.innerText = "无";
     bgmTip.innerText = "";
    
+}
+
+function searchBMG(id){
+    var searchEngine = [
+                        {id:"search-qq",    url:"https://y.qq.com/portal/search.html#w="},
+                        {id:"search-xiami", url:"http://www.xiami.com/search?key="},
+                        {id:"search-163",   url:"https://music.163.com/#/search/m/?s="}
+                     ];
+    
+    var searchUrl = $.grep(searchEngine, function(e){ return e.id == id; })[0].url + $("#search-key")[0].value;
+    window.open(searchUrl);
 }
