@@ -1,7 +1,15 @@
+var colorPicker;
 window.onload = function () {
     $( "#tools-tabs" ).tabs();
     initVideoPlayer();
     initEmojiList();
+    initFontList();
+    colorPicker = ColorPicker(document.getElementById('color-picker'),
+                function(hex, hsv, rgb) {
+                         document.getElementById("inputText").style.color = hex;
+                });
+    colorPicker.setHex("#000000");
+    setFontSize(document.getElementById("font-size").value);
 };
 
 var emojiList = [
@@ -11,6 +19,10 @@ var emojiList = [
 var effectList = [
     //{type:"txt", text:"你好！", begin:10, end:20},
     //{type:"img", file:"cy.png", begin:10, end:20},
+];
+
+var fontList = [
+    //{name:"宋体", fontMac:"STSong",       fontWindows:"SimSun",           file:"Songti.ttc"},
 ];
 
 var defaultVideo = "../video/lol3.mp4";
@@ -29,6 +41,26 @@ Date.prototype.Format = function (fmt) {
     return fmt;
 }
 
+function validataOS(){
+    if(navigator.userAgent.indexOf("Window")>0){
+        return "Windows";
+    }else if(navigator.userAgent.indexOf("Mac OS X")>0) {
+        return "Mac";
+    }else if(navigator.userAgent.indexOf("Linux")>0) {
+        return "Linux";
+    }else{
+        return "NUll";
+    }
+}
+
+function colorRgb2Hex(value) {
+    var color = value.replace(/[^\d,]/g, "").replace(/(\d+)/g, function(s, s1) {
+                                                    var v = parseInt(s1).toString(16);
+                                                    return v.length == 1 ? "0"+v : v;
+                                                    });
+    return "#"+color.replace(/,/g, "").toUpperCase();
+}
+
 function initEmojiList(){
     var oReq = new XMLHttpRequest();
     oReq.open("GET", "./get-emoji.php", true);
@@ -42,6 +74,29 @@ function initEmojiList(){
                     content += "<img id='" + emojiList[i].id +"' class='emoji' src='emoji/" + emojiList[i].file +"' draggable='true' ondragstart='drag(event)'></img>"
                 }
                 document.getElementById("emojiList").innerHTML += content;
+            } else {
+                console.log("Error", oReq.statusText);
+            }
+        }
+    };
+    oReq.send(null);
+}
+
+function initFontList(){
+    var oReq = new XMLHttpRequest();
+    oReq.open("GET", "../fonts/fonts.json", true);
+    oReq.onreadystatechange = function (oEvent) {
+        if (oReq.readyState === 4) {
+            if (oReq.status === 200) {
+                fontList = JSON.parse(oReq.responseText);
+                for(var index=0; index < fontList.length; index ++){
+                    if(((validataOS() == "Mac")?fontList[index].fontMac:fontWindows) != ""){
+                        var font = document.createElement('option');
+                        font.text = fontList[index].name;
+                        document.getElementById("font-selector").add(font);
+                    }
+                }
+                selelctFont(document.getElementById("font-selector").value);
             } else {
                 console.log("Error", oReq.statusText);
             }
@@ -224,17 +279,30 @@ function drop(ev){
 
 function addText(){
     var inputText = document.getElementById("inputText");
+    if(inputText.value.trim() == ""){
+        alert("请输入文字！");
+        return;
+    }
     var numEffect = effectList.length;
     effectList[numEffect] = {
         type: "txt",
         text: inputText.value,
         begin: $("#video-previewer")[0].currentTime,
-        end: $("#video-previewer")[0].duration
+        end: $("#video-previewer")[0].duration,
+        family: inputText.style.fontFamily,
+        size: inputText.style.fontSize.substr(0, inputText.style.fontSize.length - 2),
+        color: colorRgb2Hex(inputText.style.color)
     };
     var effectID = "effect" + numEffect;
     var newEffect = "<div id=\"";
     newEffect += effectID;
-    newEffect += "\" class=\"ui-widget-content \" style=\"padding: 10px\"><i class='hander'></i><span class=\"overlay-text\" font-size=100% >";
+    newEffect += "\" class=\"ui-widget-content \" style=\"padding: 10px\"><i class='hander'></i><span class=\"overlay-text\" style=\"font-family:"
+    newEffect += inputText.style.fontFamily;
+    newEffect += "; color:";
+    newEffect += inputText.style.color;
+    newEffect += "; font-size:";
+    newEffect += inputText.style.fontSize;
+    newEffect += "\" >";
     newEffect += inputText.value;
     newEffect += "</span></div>";
     
@@ -271,13 +339,16 @@ function doEdit(){
         effectList[index].width = $("#effect" + index)[0].clientWidth * scale;
         effectList[index].height = $("#effect" + index)[0].clientHeight * scale;
         effectList[index].zorder = $("#effect" + index)[0].style.zIndex;
+        if(effectList[index].size != undefined){
+            effectList[index].size = effectList[index].size * scale;
+        }
     }
     
     var file = getQueryString("file");
     effectList.push({type:"mov", file:file?file:defaultVideo});
     
     var script = JSON.stringify(effectList);
-    var jumpUrl = "edit.php?script=" + script;
+    var jumpUrl = "edit.php?script=" + btoa(encodeURIComponent(script));
     window.location.href = jumpUrl;
 }
 
@@ -327,4 +398,13 @@ function searchBMG(id){
     
     var searchUrl = $.grep(searchEngine, function(e){ return e.id == id; })[0].url + $("#search-key")[0].value;
     window.open(searchUrl);
+}
+
+function selelctFont(font){
+    var fontSet = $.grep(fontList, function(e){ return e.name == font; })[0];
+    document.getElementById("inputText").style.fontFamily = (validataOS() == "Mac")?fontSet.fontMac:fontSet.fontWindows;
+}
+
+function setFontSize(size){
+    document.getElementById("inputText").style.fontSize = size + "px";
 }

@@ -8,11 +8,13 @@
         <!-- 引用css -->
         <link rel="stylesheet" type="text/css" href="css/style.css" />
         <link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
+        <link rel="stylesheet" type="text/css" href="css/themes.css" />
         <!-- 引用js -->
         <script type="text/javascript" src="./jquery/jquery-1.10.2.js"></script>
         <script type="text/javascript" src="./jquery/jquery-ui-1.11.0.js"></script>
         <script type="text/javascript" src="js/drag.js"></script>
         <script type="text/javascript" src="js/edit.js"></script>
+        <script type="text/javascript" src="js/colorpicker.min.js"></script>
     </head>
     <body>
         <div id="page-container">
@@ -55,8 +57,19 @@
                         <div id="emojiList"></div>
                     </div>
                     <div id="tools-text">
-                        <textarea id="inputText" rows="3" cols="30"></textarea>
-                        <button onclick="addText()">增加文字</button>
+                        <textarea id="inputText"></textarea>
+                        <div>
+                            <label>字体：</label>
+                            <select id="font-selector" onchange="selelctFont(this.value)"></select>
+                            <label>大小：</label>
+                            <input id="font-size" type="range" min=10 max=60 value=30 onchange="setFontSize(this.value)"/>
+                            <div id="addText-container">
+                                <button onclick="addText()">添加</button>
+                            </div>
+                        </div>
+                        <label>颜色：</label>
+                        <p>
+                        <div id="color-picker" class="cp-default"></div>
                     </div>
                     <div id="tools-music">
                         <label>你可以在下列第三方音乐网站中搜索你想设置为背景的音乐，并在第三方网站进行播放试听，试听成功后本页面会检测到该音乐，可以在下方预览，确认后点击“设为背景音乐”即可。</label>
