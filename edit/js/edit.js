@@ -195,7 +195,7 @@ function drag(ev){
 function refreshEffect(){
     var currentTime = $( "#video-previewer" )[0].currentTime;
     for(var index = 0; index < effectList.length; index ++){
-        if(effectList[index].begin > currentTime || effectList[index].end < currentTime){
+        if(effectList[index].begin > currentTime || effectList[index].end < currentTime || effectList[index].valid == false){
             $("#effect"+ index)[0].style.visibility = "hidden";
         }
         else{
@@ -207,30 +207,31 @@ function refreshEffect(){
 function refreshHandler(){
     for (var i=0;i<effectList.length;i++)
     {
-        $("#effect"+ i).resizable({
-                                  aspectRatio: effectList[i].type == "img" ? true : false//开启按比例缩放，也可以指定比例： 16 / 9
-                                  });
-        $("#effect"+ i).dragging({
-                                 move: 'both',
-                                 randomPosition: false,
-                                 hander: '.hander'
-                                 });
-        
-        $( "#slider-range-" + i ).slider({
-                                        range: true,
-                                        min: 0,
-                                        max: $( "#video-previewer" )[0].duration,
-                                        values: [ effectList[i].begin, effectList[i].end ],
-                                        slide: function( event, ui ) {
-                                            var sliderID = ui.handle.parentNode.id;
-                                            var index = parseInt(sliderID.substr(sliderID.lastIndexOf("-") + 1));
-                                            effectList[index].begin = ui.values[0];
-                                            effectList[index].end = ui.values[1];
-                                            $( "#amount-" + index).val( new Date(ui.values[0]*1000).Format("hh:mm:ss") + " - " + new Date(ui.values[1]*1000).Format("hh:mm:ss") );
-                                            refreshEffect();
-                                            }
-                                        });
-        $( "#amount-" + i ).val( new Date(effectList[i].begin*1000).Format("hh:mm:ss") + " - " + new Date(effectList[i].end*1000).Format("hh:mm:ss") );
+        if(effectList[i].valid == true){
+            if(effectList[i].type == "img"){
+                $("#effect"+ i).resizable({aspectRatio: true});
+            }
+            $("#effect"+ i).dragging({
+                                     move: 'both',
+                                     hander: '.hander'
+                                     });
+            
+            $( "#slider-range-" + i ).slider({
+                                             range: true,
+                                             min: 0,
+                                             max: $( "#video-previewer" )[0].duration,
+                                             values: [ effectList[i].begin, effectList[i].end ],
+                                             slide: function( event, ui ) {
+                                             var sliderID = ui.handle.parentNode.id;
+                                             var index = parseInt(sliderID.substr(sliderID.lastIndexOf("-") + 1));
+                                             effectList[index].begin = ui.values[0];
+                                             effectList[index].end = ui.values[1];
+                                             $( "#amount-" + index).val( new Date(ui.values[0]*1000).Format("hh:mm:ss") + " - " + new Date(ui.values[1]*1000).Format("hh:mm:ss") );
+                                             refreshEffect();
+                                             }
+                                             });
+            $( "#amount-" + i ).val( new Date(effectList[i].begin*1000).Format("hh:mm:ss") + " - " + new Date(effectList[i].end*1000).Format("hh:mm:ss") );
+        }
     }
 }
 
@@ -243,7 +244,8 @@ function drop(ev){
         file: emoji.file,
         begin: $( "#video-previewer" )[0].currentTime,
         end: $( "#video-previewer" )[0].duration,
-        animate: emoji.animate
+        animate: emoji.animate,
+        valid:true
     };
     
     var effectID = "effect" + numEffect;
@@ -263,7 +265,7 @@ function drop(ev){
     
     var newEffectController = "<li id =\"effectController";
     newEffectController += numEffect;
-    newEffectController += "\" class=\"effectController\"><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
+    newEffectController += "\" class=\"effectController\"><button onclick=\"deleteEffect(this.parentElement.id)\">删除</button><label>时间范围：</label><input type=\"text\" class=\"timespan\" id=\"amount-";
     newEffectController += numEffect;
     newEffectController += "\"><img class=\"effect\" src=\"emoji/";
     newEffectController += emoji.file;
@@ -291,7 +293,8 @@ function addText(){
         end: $("#video-previewer")[0].duration,
         family: inputText.style.fontFamily,
         size: inputText.style.fontSize.substr(0, inputText.style.fontSize.length - 2),
-        color: colorRgb2Hex(inputText.style.color)
+        color: colorRgb2Hex(inputText.style.color),
+        valid:true
     };
     var effectID = "effect" + numEffect;
     var newEffect = "<div id=\"";
@@ -303,7 +306,7 @@ function addText(){
     newEffect += "; font-size:";
     newEffect += inputText.style.fontSize;
     newEffect += "\" >";
-    newEffect += inputText.value;
+    newEffect += ("<p class=\"overlay-text\">" + inputText.value.replace(/\n/g, "</p><p class=\"overlay-text\">") + "</p>");
     newEffect += "</span></div>";
     
     $( "#effect-previewer" )[0].innerHTML += newEffect;
@@ -316,7 +319,7 @@ function addText(){
     
     var newEffectController = "<li id =\"effectController";
     newEffectController += numEffect;
-    newEffectController += "\"><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
+    newEffectController += "\"><button onclick=\"deleteEffect(this.parentElement.id)\">删除</button><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
     newEffectController += numEffect;
     newEffectController += "\"/><label>";
     newEffectController += inputText.value;
@@ -331,23 +334,35 @@ function addText(){
     refreshHandler();
 }
 
+function deleteEffect(id){
+    var index = parseInt(id.replace("effectController", ""));
+    effectList[index].valid = false;
+    $("#effectController" + index)[0].style.visibility = "hidden";
+    $("#effectController" + index)[0].style.height = 0;
+    $("#effect" + index)[0].style.visibility = "hidden";
+}
+
 function doEdit(){
     var scale =  $( "#video-previewer" )[0].videoHeight/$( "#video-previewer" )[0].clientHeight;
+    var tmpEffectList = [];
     for(var index=0; index<effectList.length; index++){
-        effectList[index].top = $("#effect" + index)[0].offsetTop * scale;
-        effectList[index].left = $("#effect" + index)[0].offsetLeft * scale;
-        effectList[index].width = $("#effect" + index)[0].clientWidth * scale;
-        effectList[index].height = $("#effect" + index)[0].clientHeight * scale;
-        effectList[index].zorder = $("#effect" + index)[0].style.zIndex;
-        if(effectList[index].size != undefined){
-            effectList[index].size = effectList[index].size * scale;
+        if(effectList[index].valid == true){
+            effectList[index].top = $("#effect" + index)[0].offsetTop * scale;
+            effectList[index].left = $("#effect" + index)[0].offsetLeft * scale;
+            effectList[index].width = $("#effect" + index)[0].clientWidth * scale;
+            effectList[index].height = $("#effect" + index)[0].clientHeight * scale;
+            effectList[index].zorder = $("#effect" + index)[0].style.zIndex;
+            if(effectList[index].size != undefined){
+                effectList[index].size = effectList[index].size * scale;
+            }
+            tmpEffectList.push(effectList[index]);
         }
     }
     
     var file = getQueryString("file");
-    effectList.push({type:"mov", file:file?file:defaultVideo});
+    tmpEffectList.push({type:"mov", file:file?file:defaultVideo});
     
-    var script = JSON.stringify(effectList);
+    var script = JSON.stringify(tmpEffectList);
     var jumpUrl = "edit.php?script=" + btoa(encodeURIComponent(script));
     window.location.href = jumpUrl;
 }

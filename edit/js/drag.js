@@ -12,12 +12,10 @@ $.fn.extend({
 		var father = $this.parent();
 		var defaults = {
 			move : 'both',
-			randomPosition : true ,
 			hander:1
 		}
 		var opt = $.extend({},defaults,data);
 		var movePosition = opt.move;
-		var random = opt.randomPosition;
 		
 		var hander = opt.hander;
 		
@@ -43,31 +41,6 @@ $.fn.extend({
 		var positionY;
 		var moveX ;
 		var moveY ;
-		
-		if(random){
-			$thisRandom();
-		}
-		function $thisRandom(){ //随机函数
-			$this.each(function(index){
-				var randY = parseInt(Math.random()*(faHeight-thisHeight));///
-				var randX = parseInt(Math.random()*(faWidth-thisWidth));///
-				if(movePosition.toLowerCase() == 'x'){
-					$(this).css({
-						left:randX
-					});
-				}else if(movePosition.toLowerCase() == 'y'){
-					$(this).css({
-						top:randY
-					});
-				}else if(movePosition.toLowerCase() == 'both'){
-					$(this).css({
-						top:randY,
-						left:randX
-					});
-				}
-				
-			});	
-		}
 		
 		hander.mousedown(function(e){
             thisWidth = $this.width()+parseInt($this.css('padding-left'))+parseInt($this.css('padding-right'));
