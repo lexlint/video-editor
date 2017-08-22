@@ -359,6 +359,16 @@ function doEdit(){
         }
     }
     
+    var bgm = document.getElementById("bgm").src;
+    if(bgm != ""){
+        tmpEffectList.push({type:"bgm", url:bgm, volume:$("#bgm-volume")[0].valueAsNumber});
+    }
+    
+    if(tmpEffectList.length == 0){
+        alert("没有添加任何特效！");
+        return;
+    }
+    
     var file = getQueryString("file");
     tmpEffectList.push({type:"mov", file:file?file:defaultVideo});
     

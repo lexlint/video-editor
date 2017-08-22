@@ -35,6 +35,7 @@ ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.
     $S=json_decode($script);
     print_r($S);
     
+    //添加图像
     function filter_img($var)
     {
         return($var->type == "img");
@@ -56,17 +57,11 @@ ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.
         .":enable='between(t,".($img->begin).",".($img->end).")".(($img->animate == 1)?":shortest=1":"")."'[dest".$vcount."];";
     }
     
+    //添加文字
     function filter_txt($var)
     {
         return($var->type == "txt");
     }
-    $txts = array_filter($S,"filter_txt");
-    $txt_overlay = "";
-    
-    $fonts_file = fopen("../fonts/fonts.json", "r") or die("Unable to open font.json!");
-    $fonts_content = fread($fonts_file,filesize("../fonts/fonts.json"));
-    fclose($fonts_file);
-    $fonts=json_decode($fonts_content);
     
     class fonts_filter
     {
@@ -82,6 +77,14 @@ ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.
             return $v->fontMac == $this->txt_family || $v->fontWindows == $this->txt_family;
         }
     }
+    
+    $txts = array_filter($S,"filter_txt");
+    $txt_overlay = "";
+    
+    $fonts_file = fopen("../fonts/fonts.json", "r") or die("Unable to open font.json!");
+    $fonts_content = fread($fonts_file,filesize("../fonts/fonts.json"));
+    fclose($fonts_file);
+    $fonts=json_decode($fonts_content);
     
     foreach ($txts as $txt) {
         $vcount ++;
@@ -102,7 +105,25 @@ ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.
         $txt_overlay .= ($vcount==1?"[0:v]":"[dest".($vcount-1)."]")." drawtext=fontfile=../fonts/".$font_file.":textfile='".$tmp_file_name."':fontcolor=".($txt->color).":fontsize=".($txt->size).":x=".($txt->left).":y=".($txt->top).":enable='between(t,".($txt->begin).",".($txt->end).")'[dest".$vcount."];";
     }
     
-    $filter = substr_replace($img_src.$img_overlay.$txt_overlay, "\"", -1);
+    //添加BGM
+    function filter_bgm($var)
+    {
+        return($var->type == "bgm");
+    }
+    $bgms = array_filter($S,"filter_bgm");
+    
+    $bgm_input = "";
+    $bgm_mix = "";
+    foreach ($bgms as $bgm) {
+        print_r($bgm);
+        $bgm_input .= " -i ".$bgm->url." ";
+        $bgm_mix .= "[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=1.0[a0];";
+        $bgm_mix .= "[".(count($imgs) + 1).":a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=".($bgm->volume / 100)."[a".(count($imgs) + 1)."];";
+        $bgm_mix .= "[a0][a".(count($imgs) + 1)."]amix=inputs=2:duration=first[aout];";
+        break;
+    }
+
+    $filter = substr_replace($img_src.$img_overlay.$txt_overlay.$bgm_mix, "\"", -1);
 
     $parts = parse_url($S[count($S)-1]->file);
     $file = substr_replace($parts["path"], "_edit", - 4, 0);
@@ -110,9 +131,9 @@ ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.
         unlink($file);
     }
     
-    $command = "ffmpeg -i ".($S[count($S)-1]->file).$img_input
+    $command = "ffmpeg -i ".($S[count($S)-1]->file).$img_input.$bgm_input
     ." -filter_complex \"".$filter
-    ." -map [dest".$vcount."] -map 0:a -movflags faststart ".$file." 2>&1";
+    ." -map ".($vcount==0?"0:v":"[dest".$vcount."]")." -map ".(strlen($bgm_mix) > 0 ? "[aout]" : "0:a")." -movflags faststart ".$file." 2>&1";
 
     echo $command;
     
