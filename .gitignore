@@ -1,4 +1,5 @@
 #test file
 /video/*
 /fonts/*
+/edit/tmp/*
 !video/lol3.mp4
