@@ -1,3 +1,19 @@
+function uploadBGM(e){
+    console.log(e.detail);
+    chrome.runtime.sendMessage({cmd: "uploadBGM", param : e.detail},
+                               function(response) {});
+    var uploadStatus = document.getElementById("bgm-upload-status");
+    if(uploadStatus != undefined){
+        uploadStatus.innerText = "(上传中)";
+    }
+}
+
+function initMsgCenter(){
+    var msgCenter = document.getElementById("msg-center");
+    if(msgCenter != undefined){
+        msgCenter.addEventListener("uploadBGM", uploadBGM);
+    }
+}
 
 function setCaptureMusic(url){
     var musicCapture = document.getElementById("music-capture");
@@ -18,28 +34,29 @@ function setCaptureMusic(url){
     }
 }
 
-chrome.runtime.onMessage.addListener(
-                                     function(request, sender, sendResponse) {
-                                     console.log(sender.tab ?
-                                                 "from a content script:" + sender.tab.url :
-                                                 "from the extension");
-                                     if (request.type == "music"){
-                                        setCaptureMusic(request.url);
-                                        console.log(request.url);
-                                     }
-                                     sendResponse({code: 0});
-                                     });
-
-function initMsgCenter(){
-    var msgCenter = document.getElementById("msg-center");
-    if(msgCenter != undefined){
-        msgCenter.addEventListener("uploadBGM", function(e) {
-                                   console.log(e.detail);
-                                   chrome.runtime.sendMessage({cmd: "uploadBGM", param : e.detail}, function(response) {
-                                                              //console.log(response.farewell);
-                                                              });
-                                   });
+function onMessage(request, sender, sendResponse) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+    switch(request.type){
+        case "music":{
+            setCaptureMusic(request.url);
+            break;
+        }
+            
+        case "upload-response":{
+            console.log(request.response);
+            var uploadStatus = document.getElementById("bgm-upload-status");
+            if(uploadStatus != undefined){
+                uploadStatus.innerText = "(已上传)";
+                uploadStatus.title = request.response.returnName;
+            }
+            break;
+        }
     }
+    
+    sendResponse({code: 0});
 }
 
 initMsgCenter();
+chrome.runtime.onMessage.addListener(onMessage);

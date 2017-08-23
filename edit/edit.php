@@ -116,7 +116,7 @@ ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.
     $bgm_mix = "";
     foreach ($bgms as $bgm) {
         print_r($bgm);
-        $bgm_input .= " -i ".$bgm->url." ";
+        $bgm_input .= " -i ./upload/".$bgm->file." ";
         $bgm_mix .= "[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=1.0[a0];";
         $bgm_mix .= "[".(count($imgs) + 1).":a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=".($bgm->volume / 100)."[a".(count($imgs) + 1)."];";
         $bgm_mix .= "[a0][a".(count($imgs) + 1)."]amix=inputs=2:duration=first[aout];";

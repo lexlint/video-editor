@@ -360,9 +360,9 @@ function doEdit(){
         }
     }
     
-    var bgm = document.getElementById("bgm").src;
-    if(bgm != ""){
-        tmpEffectList.push({type:"bgm", url:bgm, volume:$("#bgm-volume")[0].valueAsNumber});
+    var uploadStatus = document.getElementById("bgm-upload-status");
+    if(uploadStatus.title != ""){
+        tmpEffectList.push({type:"bgm", file:uploadStatus.title, volume:$("#bgm-volume")[0].valueAsNumber});
     }
     
     if(tmpEffectList.length == 0){
@@ -421,7 +421,8 @@ function setBGM(){
             bgmTip.innerText = musicCapture.src;
             
             var src = getLocation(musicCapture.src);
-            fireExtensionMsg("uploadBGM", {"url" : this.location.origin + this.location.pathname + "upload.php", "src" : musicCapture.src, "name" : src.pathname.replace(/\//g, "-")});
+            var name = src.pathname.substr(src.pathname.lastIndexOf("/") + 1);
+            fireExtensionMsg("uploadBGM", {"url" : this.location.origin + this.location.pathname + "upload.php", "src" : musicCapture.src, "name" : name});
             alert("设置成功！");
         }
     }
@@ -431,10 +432,12 @@ function resetBGM(){
     var bgm = document.getElementById("bgm");
     var bgmStatus = document.getElementById("bgm-status");
     var bgmTip = document.getElementById("bgm-tip");
+    var uploadStatus = document.getElementById("bgm-upload-status");
     bgm.src = "";
     bgmStatus.innerText = "无";
     bgmTip.innerText = "";
-   
+    uploadStatus.innerText = "";
+    uploadStatus.title = "";
 }
 
 function searchBMG(id){
