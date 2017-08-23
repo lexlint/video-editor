@@ -1,28 +1,41 @@
 <html>
     <body>
         <script type="text/javascript">
-            var oReq = new XMLHttpRequest();
-            oReq.open("GET", "../music/numb.mp3", true);
-            oReq.responseType = "blob";
-            oReq.onreadystatechange = function (oEvent) {
-                if (oReq.readyState === 4) {
-                    if (oReq.status === 200) {
-                        
-                        var formData = new FormData();
-                        
-                        var blobs = new Blob([oReq.response], {type:"audio/mp3"});
-                        formData.append("file", blobs, "numb2.mp3");
-                        formData.append("submit", "Submit");
-                        
-                        var request = new XMLHttpRequest();
-                        request.open("POST", "./upload.php");
-                        request.send(formData);
-                    } else {
-                        console.log("Error", oReq.statusText);
+            function upload(){
+                var oReq = new XMLHttpRequest();
+                oReq.open("GET", "http://om5.alicdn.com/169/7169/2102804288/1796407992_1501204491583.mp3?auth_key=203ef762b518136c168780badedf02cf-1504062000-0-null", true);
+                oReq.responseType = "blob";
+                oReq.setRequestHeader("From-VideoEditor","");
+                oReq.onreadystatechange = function (oEvent) {
+                    if (oReq.readyState === 4) {
+                        if (oReq.status === 200) {
+                            
+                            var formData = new FormData();
+                            
+                            var blobs = new Blob([oReq.response], {type:"audio/mp3"});
+                            formData.append("file", blobs, "numb2.mp3");
+                            formData.append("submit", "Submit");
+                            
+                            var request = new XMLHttpRequest();
+                            request.open("POST", "./upload.php");
+                            request.send(formData);
+                        } else {
+                            console.log("Error", oReq.statusText);
+                        }
                     }
-                }
-            };
-            oReq.send(null);
+                };
+                oReq.send(null);
+            }
+        
+       //upload();
         </script>
+        
+        <form action="upload.php" method="post"
+            enctype="multipart/form-data">
+            <label for="file">Filename:</label>
+            <input type="file" name="file" id="file" />
+            <br />
+            <input type="submit" name="submit" value="Submit" />
+        </form>
     </body>
 </html>

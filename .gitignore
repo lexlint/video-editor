@@ -2,4 +2,5 @@
 /video/*
 /fonts/*
 /edit/tmp/*
+/edit/upload/*
 !video/lol3.mp4

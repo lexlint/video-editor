@@ -73,7 +73,7 @@
                     <div id="tools-music">
                         <p><label>你可以在下列第三方音乐网站中搜索你想设置为背景的音乐，并在第三方网站进行播放试听，试听成功后本页面会检测到该音乐，可以在下方预览，确认后点击“设为背景音乐”即可。</label></p>
                         <label>关键词：</label>
-                        <input id="search-key" type="text"></input>
+                        <input id="search-key" type="text" onKeyPress="searchKeyChange(event)"></input>
                         <p>
                         <button id="search-qq" onclick="searchBMG(this.id)">去QQ音乐搜</button>
                         <button id="search-xiami" onclick="searchBMG(this.id)">去虾米搜</button>

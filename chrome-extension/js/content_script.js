@@ -29,3 +29,17 @@ chrome.runtime.onMessage.addListener(
                                      }
                                      sendResponse({code: 0});
                                      });
+
+function initMsgCenter(){
+    var msgCenter = document.getElementById("msg-center");
+    if(msgCenter != undefined){
+        msgCenter.addEventListener("uploadBGM", function(e) {
+                                   console.log(e.detail);
+                                   chrome.runtime.sendMessage({cmd: "uploadBGM", param : e.detail}, function(response) {
+                                                              //console.log(response.farewell);
+                                                              });
+                                   });
+    }
+}
+
+initMsgCenter();

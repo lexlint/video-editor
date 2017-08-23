@@ -10,6 +10,7 @@ window.onload = function () {
                 });
     colorPicker.setHex("#000000");
     setFontSize(document.getElementById("font-size").value);
+    initExtensionMsgCenter();
 };
 
 var emojiList = [
@@ -383,6 +384,25 @@ function toPercent(data){
     return ret;
 }
 
+function initExtensionMsgCenter(){
+    var msgCenter = document.createElement("div");
+    msgCenter.id = "msg-center";
+    document.body.insertBefore(msgCenter, document.body.childNodes[0]);
+}
+
+function fireExtensionMsg(event, param){
+    var msgEvent = new CustomEvent(event, {"detail" : param});
+    
+    msgCenter = document.getElementById("msg-center");
+    msgCenter.dispatchEvent(msgEvent);
+}
+
+var getLocation = function(href) {
+    var l = document.createElement("a");
+    l.href = href;
+    return l;
+};
+
 function setBGM(){
     var musicCapture = document.getElementById("music-capture");
     var bgm = document.getElementById("bgm");
@@ -399,6 +419,9 @@ function setBGM(){
             var bgmTip = document.getElementById("bgm-tip");
             bgmStatus.innerText = "已设置";
             bgmTip.innerText = musicCapture.src;
+            
+            var src = getLocation(musicCapture.src);
+            fireExtensionMsg("uploadBGM", {"url" : this.location.origin + this.location.pathname + "upload.php", "src" : musicCapture.src, "name" : src.pathname.replace(/\//g, "-")});
             alert("设置成功！");
         }
     }
@@ -415,13 +438,18 @@ function resetBGM(){
 }
 
 function searchBMG(id){
+    var key = $("#search-key")[0].value;
+    if (key.length == 0){
+        alert("请输入关键词！");
+        return ;
+    }
     var searchEngine = [
                         {id:"search-qq",    url:"https://y.qq.com/portal/search.html#w="},
                         {id:"search-xiami", url:"http://www.xiami.com/search?key="},
                         {id:"search-163",   url:"https://music.163.com/#/search/m/?s="}
                      ];
     
-    var searchUrl = $.grep(searchEngine, function(e){ return e.id == id; })[0].url + $("#search-key")[0].value;
+    var searchUrl = $.grep(searchEngine, function(e){ return e.id == id; })[0].url + key;
     window.open(searchUrl);
 }
 
@@ -432,4 +460,10 @@ function selelctFont(font){
 
 function setFontSize(size){
     document.getElementById("inputText").style.fontSize = size + "px";
+}
+
+function searchKeyChange(event){
+    if(event.key == 'Enter'){
+        searchBMG("search-xiami");
+    }
 }
