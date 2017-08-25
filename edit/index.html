@@ -1,99 +1,99 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>视频编辑</title>
-        <meta name="Generator" content="EditPlus"/>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <!-- 引用css -->
-        <link rel="stylesheet" type="text/css" href="css/style.css" />
-        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
-        <link rel="stylesheet" type="text/css" href="css/themes.css" />
-        <!-- 引用js -->
-        <script type="text/javascript" src="./jquery/jquery-1.10.2.js"></script>
-        <script type="text/javascript" src="./jquery/jquery-ui-1.11.0.js"></script>
-        <script type="text/javascript" src="js/drag.js"></script>
-        <script type="text/javascript" src="js/edit.js"></script>
-        <script type="text/javascript" src="js/colorpicker.min.js"></script>
-    </head>
-    <body>
-        <div id="page-container">
-            <div id="editor-container">
-                <div id="video-container">
-                    <video id="video-previewer" controls="controls" controlsList="nodownload">请使用Chrome 60.0以上版本</video>
-                    <audio id="bgm" loop="loop">请使用Chrome 60.0以上版本</audio>
-                </div>
-                <div id="effect-container">
-                    <div id="effect-area">
-                        <div id="effect-previewer" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
-                    </div>
-                </div>
-                <div id="effectList-container">
-                    <ul id="effectList"></ul>
-                </div>
-            </div>
-            
-            <div id="tools-container">
-                <div>
-                    <span class="tooltip">背景音乐：
-                        <span id="bgm-status">未设置</span>
-                        <span id="bgm-tip" class="tooltiptext"></span>
-                    </span>
-                    <span id="bgm-upload-status"></span>
-                    <input id="bgm-volume" type="range" value=100 onchange="setBGMVolume()"/>
-                    <button id="bgm-reset" onclick="resetBGM()">重置</button>
-                    <div id="commit-container">
-                        <button id="commit" onclick="doEdit()">提交编辑</button>
-                    </div>
-                </div>
-                
-                <div id="tools-tabs">
-                    <ul>
-                        <li><a href="#tools-img">添加表情</a></li>
-                        <li><a href="#tools-text">添加文字</a></li>
-                        <li><a href="#tools-music">添加音乐</a></li>
-                    </ul>
-                    <div id="tools-img">
-                        <label>表情列表：</label>
-                        <div id="emojiList"></div>
-                    </div>
-                    <div id="tools-text">
-                        <textarea id="inputText"></textarea>
-                        <div>
-                            <label>字体：</label>
-                            <select id="font-selector" onchange="selelctFont(this.value)"></select>
-                            <label>大小：</label>
-                            <input id="font-size" type="range" min=10 max=60 value=30 onchange="setFontSize(this.value)"/>
-                            <div id="addText-container">
-                                <button onclick="addText()">添加</button>
-                            </div>
-                        </div>
-                        <p><label>颜色：</label></p>
-                        <p><div id="color-picker" class="cp-default"></div></p>
-                    </div>
-                    <div id="tools-music">
-                        <p><label>你可以在下列第三方音乐网站中搜索你想设置为背景的音乐，并在第三方网站进行播放试听，试听成功后本页面会检测到该音乐，可以在下方预览，确认后点击“设为背景音乐”即可。</label></p>
-                        <label>关键词：</label>
-                        <input id="search-key" type="text" onKeyPress="searchKeyChange(event)"></input>
-                        <p>
-                        <button id="search-qq" onclick="searchBMG(this.id)">去QQ音乐搜</button>
-                        <button id="search-xiami" onclick="searchBMG(this.id)">去虾米搜</button>
-                        <button id="search-163" onclick="searchBMG(this.id)">去网易云音乐搜</button>
-                        </p>
-                        <span class="tooltip">
-                            <span id="music-status">检测中...</span>
-                            <span id="music-tip" class="tooltiptext"></span>
-                        </span>
-                        <p>
-                        <label>预览：</label>
-                        <audio id="music-capture" controls="controls" controlsList="nodownload"></audio>
-                        </p>
-                        <p>
-                        <button id="bgm-set" onclick="setBGM()">设为背景音乐</button>
-                        </p>
-                    </div>
-                </div>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>视频编辑</title>
+    <meta name="Generator" content="EditPlus"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <!-- 引用css -->
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="css/themes.css" />
+    <!-- 引用js -->
+    <script type="text/javascript" src="./jquery/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="./jquery/jquery-ui-1.11.0.js"></script>
+    <script type="text/javascript" src="js/drag.js"></script>
+    <script type="text/javascript" src="js/edit.js"></script>
+    <script type="text/javascript" src="js/colorpicker.min.js"></script>
+</head>
+<body>
+<div id="page-container">
+    <div id="editor-container">
+        <div id="video-container">
+            <video id="video-previewer" controls="controls" controlsList="nodownload">请使用Chrome 60.0以上版本</video>
+            <audio id="bgm" loop="loop">请使用Chrome 60.0以上版本</audio>
+        </div>
+        <div id="effect-container">
+            <div id="effect-area">
+                <div id="effect-previewer" ondragover="allowDrop(event)" ondrop="drop(event)"></div>
             </div>
         </div>
-    </body>
+        <div id="effectList-container">
+            <ul id="effectList"></ul>
+        </div>
+    </div>
+
+    <div id="tools-container">
+        <div>
+            <span class="tooltip">背景音乐：
+                <span id="bgm-status">未设置</span>
+                <span id="bgm-tip" class="tooltiptext"></span>
+            </span>
+            <span id="bgm-upload-status"></span>
+            <input id="bgm-volume" type="range" value=100 onchange="setBGMVolume()"/>
+            <button id="bgm-reset" onclick="resetBGM()">重置</button>
+            <div id="commit-container">
+                <button id="commit" onclick="doEdit()">提交编辑</button>
+            </div>
+        </div>
+
+        <div id="tools-tabs">
+            <ul>
+                <li><a href="#tools-img">添加表情</a></li>
+                <li><a href="#tools-text">添加文字</a></li>
+                <li><a href="#tools-music">添加音乐</a></li>
+            </ul>
+            <div id="tools-img">
+                <label>表情列表：</label>
+                <div id="emojiList"></div>
+            </div>
+            <div id="tools-text">
+                <textarea id="inputText"></textarea>
+                <div>
+                    <label>字体：</label>
+                    <select id="font-selector" onchange="selelctFont(this.value)"></select>
+                    <label>大小：</label>
+                    <input id="font-size" type="range" min=10 max=60 value=30 onchange="setFontSize(this.value)"/>
+                    <div id="addText-container">
+                        <button onclick="addText()">添加</button>
+                    </div>
+                </div>
+                <p><label>颜色：</label></p>
+                <p><div id="color-picker" class="cp-default"></div></p>
+            </div>
+            <div id="tools-music">
+                <p><label>你可以在下列第三方音乐网站中搜索你想设置为背景的音乐，并在第三方网站进行播放试听，试听成功后本页面会检测到该音乐，可以在下方预览，确认后点击“设为背景音乐”即可。</label></p>
+                <label>关键词：</label>
+                <input id="search-key" type="text" onKeyPress="searchKeyChange(event)"></input>
+                <p>
+                    <button id="search-qq" onclick="searchBMG(this.id)">去QQ音乐搜</button>
+                    <button id="search-xiami" onclick="searchBMG(this.id)">去虾米搜</button>
+                    <button id="search-163" onclick="searchBMG(this.id)">去网易云音乐搜</button>
+                </p>
+                <span class="tooltip">
+                    <span id="music-status">检测中...</span>
+                    <span id="music-tip" class="tooltiptext"></span>
+                </span>
+                <p>
+                    <label>预览：</label>
+                    <audio id="music-capture" controls="controls" controlsList="nodownload"></audio>
+                </p>
+                <p>
+                    <button id="bgm-set" onclick="setBGM()">设为背景音乐</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 </html>

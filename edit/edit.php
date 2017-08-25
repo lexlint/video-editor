@@ -9,7 +9,7 @@ input:
 {"type":"mov","file":"../video/lol3.mp4"}
 ]
 
- 
+
 output:
 ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.mp3 -filter_complex "\
 [1:v]scale=150:150[src1];\
@@ -24,126 +24,126 @@ ffmpeg -i lol3.mp4 -ignore_loop 0 -i clock.png -ignore_loop 0 -i tt.gif -i numb.
 */
 
 <?php
-    parse_str(urldecode($_SERVER["QUERY_STRING"]));
-    echo $script;
+parse_str(urldecode($_SERVER["QUERY_STRING"]));
+echo $script;
 
-    $script = base64_decode($script);
-    echo $script;
-    $script = urldecode($script);
-    echo $script;
-    
-    $S=json_decode($script);
-    print_r($S);
-    
-    //添加图像
-    function filter_img($var)
-    {
-        return($var->type == "img");
+$script = base64_decode($script);
+echo $script;
+$script = urldecode($script);
+echo $script;
+
+$S=json_decode($script);
+print_r($S);
+
+//添加图像
+function filter_img($var)
+{
+    return($var->type == "img");
+}
+$imgs = array_filter($S,"filter_img");
+
+$img_input = "";
+$img_src = "";
+$img_overlay = "";
+$vcount = 0;
+foreach ($imgs as $img) {
+    $vcount ++;
+    if($img->animate == 1){
+        $img_input .= " -ignore_loop 0";
     }
-    $imgs = array_filter($S,"filter_img");
-
-    $img_input = "";
-    $img_src = "";
-    $img_overlay = "";
-    $vcount = 0;
-    foreach ($imgs as $img) {
-        $vcount ++;
-        if($img->animate == 1){
-            $img_input .= " -ignore_loop 0";
-        }
-        $img_input .= " -i ./emoji/".$img->file;
-        $img_src .= "[".$vcount.":v]scale=".($img->width).":".($img->height)."[src".$vcount."]; ";
-        $img_overlay .= ($vcount==1?"[0:v]":"[dest".($vcount-1)."]")."[src".$vcount."]"."overlay=x=".($img->left).":y=".($img->top)
+    $img_input .= " -i ./emoji/".$img->file;
+    $img_src .= "[".$vcount.":v]scale=".($img->width).":".($img->height)."[src".$vcount."]; ";
+    $img_overlay .= ($vcount==1?"[0:v]":"[dest".($vcount-1)."]")."[src".$vcount."]"."overlay=x=".($img->left).":y=".($img->top)
         .":enable='between(t,".($img->begin).",".($img->end).")".(($img->animate == 1)?":shortest=1":"")."'[dest".$vcount."];";
-    }
-    
-    //添加文字
-    function filter_txt($var)
+}
+
+//添加文字
+function filter_txt($var)
+{
+    return($var->type == "txt");
+}
+
+class fonts_filter
+{
+    private $txt_family = "aa";
+    public function do_filter($array, $family)
     {
-        return($var->type == "txt");
+        $this->txt_family = $family;
+        return array_filter($array, array($this,'font_selector'));
     }
-    
-    class fonts_filter
+    private function font_selector($v)
     {
-        private $txt_family = "aa";
-        public function do_filter($array, $family)
-        {
-            $this->txt_family = $family;
-            return array_filter($array, array($this,'font_selector'));
-        }
-        private function font_selector($v)
-        {
-            print_r($v);
-            return $v->fontMac == $this->txt_family || $v->fontWindows == $this->txt_family;
-        }
+        print_r($v);
+        return $v->fontMac == $this->txt_family || $v->fontWindows == $this->txt_family;
     }
-    
-    $txts = array_filter($S,"filter_txt");
-    $txt_overlay = "";
-    
-    $fonts_file = fopen("../fonts/fonts.json", "r") or die("Unable to open font.json!");
-    $fonts_content = fread($fonts_file,filesize("../fonts/fonts.json"));
-    fclose($fonts_file);
-    $fonts=json_decode($fonts_content);
-    
-    foreach ($txts as $txt) {
-        $vcount ++;
-        $tmp_file_name = "./tmp/text".$vcount.".txt";
-        $tmp_file = fopen($tmp_file_name, "w") or die("Unable to open tmp.txt!");
-        fwrite($tmp_file, str_replace("%", "\\%", str_replace("\\", "\\\\", $txt->text)));
-        fclose($tmp_file);
-        
-        $filter = new fonts_filter();
-        
-        $fonts_cur = $filter->do_filter($fonts, $txt->family);
-        $font_file = "";
-        foreach ($fonts_cur as $font) {
-            $font_file = $font->file;
-            break;
-        }
-        
-        $txt_overlay .= ($vcount==1?"[0:v]":"[dest".($vcount-1)."]")." drawtext=fontfile=../fonts/".$font_file.":textfile='".$tmp_file_name."':fontcolor=".($txt->color).":fontsize=".($txt->size).":x=".($txt->left).":y=".($txt->top).":enable='between(t,".($txt->begin).",".($txt->end).")'[dest".$vcount."];";
-    }
-    
-    //添加BGM
-    function filter_bgm($var)
-    {
-        return($var->type == "bgm");
-    }
-    $bgms = array_filter($S,"filter_bgm");
-    
-    $bgm_input = "";
-    $bgm_mix = "";
-    foreach ($bgms as $bgm) {
-        print_r($bgm);
-        $bgm_input .= " -i ./upload/".$bgm->file." ";
-        $bgm_mix .= "[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=1.0[a0];";
-        $bgm_mix .= "[".(count($imgs) + 1).":a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=".($bgm->volume / 100)."[a".(count($imgs) + 1)."];";
-        $bgm_mix .= "[a0][a".(count($imgs) + 1)."]amix=inputs=2:duration=first[aout];";
+}
+
+$txts = array_filter($S,"filter_txt");
+$txt_overlay = "";
+
+$fonts_file = fopen("../fonts/fonts.json", "r") or die("Unable to open font.json!");
+$fonts_content = fread($fonts_file,filesize("../fonts/fonts.json"));
+fclose($fonts_file);
+$fonts=json_decode($fonts_content);
+
+foreach ($txts as $txt) {
+    $vcount ++;
+    $tmp_file_name = "./tmp/text".$vcount.".txt";
+    $tmp_file = fopen($tmp_file_name, "w") or die("Unable to open tmp.txt!");
+    fwrite($tmp_file, str_replace("%", "\\%", str_replace("\\", "\\\\", $txt->text)));
+    fclose($tmp_file);
+
+    $filter = new fonts_filter();
+
+    $fonts_cur = $filter->do_filter($fonts, $txt->family);
+    $font_file = "";
+    foreach ($fonts_cur as $font) {
+        $font_file = $font->file;
         break;
     }
 
-    $filter = substr_replace($img_src.$img_overlay.$txt_overlay.$bgm_mix, "\"", -1);
+    $txt_overlay .= ($vcount==1?"[0:v]":"[dest".($vcount-1)."]")." drawtext=fontfile=../fonts/".$font_file.":textfile='".$tmp_file_name."':fontcolor=".($txt->color).":fontsize=".($txt->size).":x=".($txt->left).":y=".($txt->top).":enable='between(t,".($txt->begin).",".($txt->end).")'[dest".$vcount."];";
+}
 
-    $parts = parse_url($S[count($S)-1]->file);
-    $file = substr_replace($parts["path"], "_edit", - 4, 0);
-    if(is_file($file)){
-        unlink($file);
-    }
-    
-    $command = "ffmpeg -i ".($S[count($S)-1]->file).$img_input.$bgm_input
+//添加BGM
+function filter_bgm($var)
+{
+    return($var->type == "bgm");
+}
+$bgms = array_filter($S,"filter_bgm");
+
+$bgm_input = "";
+$bgm_mix = "";
+foreach ($bgms as $bgm) {
+    print_r($bgm);
+    $bgm_input .= " -i ./upload/".$bgm->file." ";
+    $bgm_mix .= "[0:a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=1.0[a0];";
+    $bgm_mix .= "[".(count($imgs) + 1).":a]aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=stereo,volume=".($bgm->volume / 100)."[a".(count($imgs) + 1)."];";
+    $bgm_mix .= "[a0][a".(count($imgs) + 1)."]amix=inputs=2:duration=first[aout];";
+    break;
+}
+
+$filter = substr_replace($img_src.$img_overlay.$txt_overlay.$bgm_mix, "\"", -1);
+
+$parts = parse_url($S[count($S)-1]->file);
+$file = substr_replace($parts["path"], "_edit", - 4, 0);
+if(is_file($file)){
+    unlink($file);
+}
+
+$command = "ffmpeg -i ".($S[count($S)-1]->file).$img_input.$bgm_input
     ." -filter_complex \"".$filter
     ." -map ".($vcount==0?"0:v":"[dest".$vcount."]")." -map ".(strlen($bgm_mix) > 0 ? "[aout]" : "0:a")." -movflags faststart ".$file." 2>&1";
 
-    echo $command;
-    
-    $output = shell_exec($command);
-    echo $output;
+echo $command;
 
-    $jumpUrl = "index.html?file=".$file;
-    echo $jumpUrl;
+$output = shell_exec($command);
+echo $output;
 
-    echo "<script type='text/javascript'>";
-    echo "window.location.href='$jumpUrl'";
-    echo "</script>";
+$jumpUrl = "index.html?file=".$file;
+echo $jumpUrl;
+
+echo "<script type='text/javascript'>";
+echo "window.location.href='$jumpUrl'";
+echo "</script>";
 ?>

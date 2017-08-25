@@ -1,4 +1,5 @@
 #test file
+/.idea/*
 /video/*
 /fonts/*
 /edit/tmp/*

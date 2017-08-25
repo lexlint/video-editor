@@ -5,9 +5,9 @@ window.onload = function () {
     initEmojiList();
     initFontList();
     colorPicker = ColorPicker(document.getElementById('color-picker'),
-                function(hex, hsv, rgb) {
-                         document.getElementById("inputText").style.color = hex;
-                });
+        function(hex, hsv, rgb) {
+            document.getElementById("inputText").style.color = hex;
+        });
     colorPicker.setHex("#000000");
     setFontSize(document.getElementById("font-size").value);
     initExtensionMsgCenter();
@@ -56,9 +56,9 @@ function validataOS(){
 
 function colorRgb2Hex(value) {
     var color = value.replace(/[^\d,]/g, "").replace(/(\d+)/g, function(s, s1) {
-                                                    var v = parseInt(s1).toString(16);
-                                                    return v.length == 1 ? "0"+v : v;
-                                                    });
+        var v = parseInt(s1).toString(16);
+        return v.length == 1 ? "0"+v : v;
+    });
     return "#"+color.replace(/,/g, "").toUpperCase();
 }
 
@@ -69,7 +69,7 @@ function initEmojiList(){
         if (oReq.readyState === 4) {
             if (oReq.status === 200) {
                 emojiList = JSON.parse(oReq.responseText);
-                
+
                 var content = "";
                 for (var i = 0; i < emojiList.length; i ++){
                     content += "<img id='" + emojiList[i].id +"' class='emoji' src='emoji/" + emojiList[i].file +"' draggable='true' ondragstart='drag(event)'></img>"
@@ -108,13 +108,13 @@ function initFontList(){
 
 function initVideoPlayer(){
     var video = document.getElementById("video-previewer");
-    
+
     var file = getQueryString("file");
     video.src = file?file:defaultVideo;
-    
+
     video.muted = false;
     video.volume = 1.0;
-    
+
     video.ontimeupdate = function (){onVideoTimeUpdate();};
     video.onloadedmetadata = function (){onVideoMetadata();};
     video.onplaying = function(){onVideoPlaying();};
@@ -213,24 +213,24 @@ function refreshHandler(){
                 $("#effect"+ i).resizable({aspectRatio: true});
             }
             $("#effect"+ i).dragging({
-                                     move: 'both',
-                                     hander: '.hander'
-                                     });
-            
+                move: 'both',
+                hander: '.hander'
+            });
+
             $( "#slider-range-" + i ).slider({
-                                             range: true,
-                                             min: 0,
-                                             max: $( "#video-previewer" )[0].duration,
-                                             values: [ effectList[i].begin, effectList[i].end ],
-                                             slide: function( event, ui ) {
-                                             var sliderID = ui.handle.parentNode.id;
-                                             var index = parseInt(sliderID.substr(sliderID.lastIndexOf("-") + 1));
-                                             effectList[index].begin = ui.values[0];
-                                             effectList[index].end = ui.values[1];
-                                             $( "#amount-" + index).val( new Date(ui.values[0]*1000).Format("hh:mm:ss") + " - " + new Date(ui.values[1]*1000).Format("hh:mm:ss") );
-                                             refreshEffect();
-                                             }
-                                             });
+                range: true,
+                min: 0,
+                max: $( "#video-previewer" )[0].duration,
+                values: [ effectList[i].begin, effectList[i].end ],
+                slide: function( event, ui ) {
+                    var sliderID = ui.handle.parentNode.id;
+                    var index = parseInt(sliderID.substr(sliderID.lastIndexOf("-") + 1));
+                    effectList[index].begin = ui.values[0];
+                    effectList[index].end = ui.values[1];
+                    $( "#amount-" + index).val( new Date(ui.values[0]*1000).Format("hh:mm:ss") + " - " + new Date(ui.values[1]*1000).Format("hh:mm:ss") );
+                    refreshEffect();
+                }
+            });
             $( "#amount-" + i ).val( new Date(effectList[i].begin*1000).Format("hh:mm:ss") + " - " + new Date(effectList[i].end*1000).Format("hh:mm:ss") );
         }
     }
@@ -248,22 +248,22 @@ function drop(ev){
         animate: emoji.animate,
         valid:true
     };
-    
+
     var effectID = "effect" + numEffect;
     var newEffect = "<div id=\"";
     newEffect += effectID;
     newEffect += "\" class=\"ui-widget-content\" ><i class='hander'></i><img width=100% height=100% src=\"emoji/";
     newEffect += emoji.file;
     newEffect += "\"></div>";
-    
+
     $( "#effect-previewer" )[0].innerHTML += newEffect;
-    
+
     $("#" + effectID).css({
-                          position: 'absolute',
-                          top: ev.offsetY,
-                          left: ev.offsetX
-                          });
-    
+        position: 'absolute',
+        top: ev.offsetY,
+        left: ev.offsetX
+    });
+
     var newEffectController = "<li id =\"effectController";
     newEffectController += numEffect;
     newEffectController += "\" class=\"effectController\"><button onclick=\"deleteEffect(this.parentElement.id)\">删除</button><label>时间范围：</label><input type=\"text\" class=\"timespan\" id=\"amount-";
@@ -273,7 +273,7 @@ function drop(ev){
     newEffectController += "\"/><div class=\"slider-range\" id=\"slider-range-";
     newEffectController += numEffect;
     newEffectController += "\" ></div></li>";
-    
+
     var effectControllerContainer = document.getElementById("effectList");
     effectControllerContainer.innerHTML += newEffectController;
 
@@ -309,15 +309,15 @@ function addText(){
     newEffect += "\" >";
     newEffect += ("<p class=\"overlay-text\">" + inputText.value.replace(/\n/g, "</p><p class=\"overlay-text\">") + "</p>");
     newEffect += "</span></div>";
-    
+
     $( "#effect-previewer" )[0].innerHTML += newEffect;
-    
+
     $("#" + effectID).css({
-                          position: 'absolute',
-                          top: $( "#effect-previewer" )[0].clientHeight / 2,
-                          left: $( "#effect-previewer" )[0].clientWidth / 2
-                          });
-    
+        position: 'absolute',
+        top: $( "#effect-previewer" )[0].clientHeight / 2,
+        left: $( "#effect-previewer" )[0].clientWidth / 2
+    });
+
     var newEffectController = "<li id =\"effectController";
     newEffectController += numEffect;
     newEffectController += "\"><button onclick=\"deleteEffect(this.parentElement.id)\">删除</button><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
@@ -327,7 +327,7 @@ function addText(){
     newEffectController += "</label><div class=\"slider-range\" id=\"slider-range-";
     newEffectController += numEffect;
     newEffectController += "\" ></div></li>";
-    
+
     var effectControllerContainer = document.getElementById("effectList");
     effectControllerContainer.innerHTML += newEffectController;
 
@@ -359,20 +359,20 @@ function doEdit(){
             tmpEffectList.push(effectList[index]);
         }
     }
-    
+
     var uploadStatus = document.getElementById("bgm-upload-status");
     if(uploadStatus.title != ""){
         tmpEffectList.push({type:"bgm", file:uploadStatus.title, volume:$("#bgm-volume")[0].valueAsNumber});
     }
-    
+
     if(tmpEffectList.length == 0){
         alert("没有添加任何特效！");
         return;
     }
-    
+
     var file = getQueryString("file");
     tmpEffectList.push({type:"mov", file:file?file:defaultVideo});
-    
+
     var script = JSON.stringify(tmpEffectList);
     var jumpUrl = "edit.php?script=" + btoa(encodeURIComponent(script));
     window.location.href = jumpUrl;
@@ -392,7 +392,7 @@ function initExtensionMsgCenter(){
 
 function fireExtensionMsg(event, param){
     var msgEvent = new CustomEvent(event, {"detail" : param});
-    
+
     msgCenter = document.getElementById("msg-center");
     msgCenter.dispatchEvent(msgEvent);
 }
@@ -419,10 +419,10 @@ function setBGM(){
             var bgmTip = document.getElementById("bgm-tip");
             bgmStatus.innerText = "已设置";
             bgmTip.innerText = musicCapture.src;
-            
+
             var src = getLocation(musicCapture.src);
             var name = src.pathname.substr(src.pathname.lastIndexOf("/") + 1);
-            fireExtensionMsg("uploadBGM", {"url" : this.location.origin + this.location.pathname + "upload.php", "src" : musicCapture.src, "name" : name});
+            fireExtensionMsg("uploadBGM", {"url" : this.location.origin + this.location.pathname.substr(0, this.location.pathname.lastIndexOf("/") + 1) + "upload.php", "src" : musicCapture.src, "name" : name});
             alert("设置成功！");
         }
     }
@@ -447,11 +447,11 @@ function searchBMG(id){
         return ;
     }
     var searchEngine = [
-                        {id:"search-qq",    url:"https://y.qq.com/portal/search.html#w="},
-                        {id:"search-xiami", url:"http://www.xiami.com/search?key="},
-                        {id:"search-163",   url:"https://music.163.com/#/search/m/?s="}
-                     ];
-    
+        {id:"search-qq",    url:"https://y.qq.com/portal/search.html#w="},
+        {id:"search-xiami", url:"http://www.xiami.com/search?key="},
+        {id:"search-163",   url:"https://music.163.com/#/search/m/?s="}
+    ];
+
     var searchUrl = $.grep(searchEngine, function(e){ return e.id == id; })[0].url + key;
     window.open(searchUrl);
 }
