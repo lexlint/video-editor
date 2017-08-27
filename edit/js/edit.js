@@ -205,6 +205,26 @@ function refreshEffect(){
     }
 }
 
+function selectEffect(id) {
+    $("#effect-previewer").children().css({"zIndex":"0", "border":"1px solid rgba(220,220,220,0)"});
+    $("#effectList").children().css({"zIndex":"0", "border":"1px solid rgba(220,220,220,0)"});
+    if(id === -1){
+        return;
+    }
+    $("#effect"+ id).css({"zIndex":"0", "border":"1px solid rgba(220,220,220,1)"});
+    $("#effectController"+ id).css({"zIndex":"0", "border":"1px solid rgba(220,0,0,1)"});
+
+    var scrollTop = $("#effectController"+ id)[0].offsetTop - $("#effectList-container")[0].offsetTop -  $("#effectList-container")[0].scrollTop;
+    if (scrollTop < 0){
+        $("#effectList-container")[0].scrollTop += scrollTop;
+    }
+
+    var scrollButtom = ($("#effectController"+ id)[0].offsetTop + $("#effectController"+ id)[0].offsetHeight) - ($("#effectList-container")[0].offsetTop + $("#effectList-container")[0].offsetHeight)  -  $("#effectList-container")[0].scrollTop;
+    if (scrollButtom > 0){
+        $("#effectList-container")[0].scrollTop += scrollButtom;
+    }
+}
+
 function refreshHandler(){
     for (var i=0;i<effectList.length;i++)
     {
@@ -229,11 +249,15 @@ function refreshHandler(){
                     effectList[index].end = ui.values[1];
                     $( "#amount-" + index).val( new Date(ui.values[0]*1000).Format("hh:mm:ss") + " - " + new Date(ui.values[1]*1000).Format("hh:mm:ss") );
                     refreshEffect();
+                    selectEffect(index);
                 }
             });
             $( "#amount-" + i ).val( new Date(effectList[i].begin*1000).Format("hh:mm:ss") + " - " + new Date(effectList[i].end*1000).Format("hh:mm:ss") );
         }
     }
+    $("#effect-previewer").mousedown(function(e) {
+        selectEffect(-1);
+    });
 }
 
 function drop(ev){
@@ -278,6 +302,7 @@ function drop(ev){
     effectControllerContainer.innerHTML += newEffectController;
 
     refreshHandler();
+    selectEffect(numEffect);
 }
 
 function addText(){
@@ -314,8 +339,8 @@ function addText(){
 
     $("#" + effectID).css({
         position: 'absolute',
-        top: $( "#effect-previewer" )[0].clientHeight / 2,
-        left: $( "#effect-previewer" )[0].clientWidth / 2
+        top: 0,
+        left: 0
     });
 
     var newEffectController = "<li id =\"effectController";
@@ -333,6 +358,7 @@ function addText(){
 
     inputText.value = "";
     refreshHandler();
+    selectEffect(numEffect);
 }
 
 function deleteEffect(id){

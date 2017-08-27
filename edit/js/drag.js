@@ -48,6 +48,7 @@ $.fn.extend({
 
             father.children().css({"zIndex":"0"});
             $this.css({"zIndex":"1"});
+            selectEffect(parseInt($this[0].id.replace("effect", "")));
             mDown = true;
             X = e.pageX;
             Y = e.pageY;
