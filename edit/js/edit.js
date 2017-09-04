@@ -127,9 +127,10 @@ function initVideoPlayer(){
 var lastChangeTime = 0;
 function onVideoTimeUpdate(){
     var currentTime = $( "#video-previewer" )[0].currentTime;
-    if(Math.abs(currentTime - lastChangeTime) > 0.2) {
+    if(Math.abs(currentTime - lastChangeTime) > 0.1) {
         lastChangeTime = currentTime;
         refreshEffect();
+        refreshTimeline();
     }
 }
 
@@ -152,6 +153,7 @@ function onVideoPause(){
 }
 
 function onVideoSeeking(){
+    refreshTimeline();
     var bgm = $("#bgm")[0];
     if(bgm.readyState != 0){
         bgm.pause();
@@ -193,6 +195,10 @@ function drag(ev){
     ev.dataTransfer.setData("emoji", JSON.stringify($.grep(emojiList, function(e){ return e.id == ev.target.id; })[0]));
 }
 
+function refreshTimeline() {
+    $("#timeline")[0].style.left = $( "#video-previewer" )[0].currentTime / $( "#video-previewer" )[0].duration * $("#effectList-container")[0].clientWidth + "px";
+}
+
 function refreshEffect(){
     var currentTime = $( "#video-previewer" )[0].currentTime;
     for(var index = 0; index < effectList.length; index ++){
@@ -207,19 +213,19 @@ function refreshEffect(){
 
 function selectEffect(id) {
     $("#effect-previewer").children().css({"zIndex":"0", "border":"1px solid rgba(220,220,220,0)"});
-    $("#effectList").children().css({"zIndex":"0", "border":"1px solid rgba(220,220,220,0)"});
+    $("#effectList").children().css({"zIndex":"0", "background":"#666"});
     if(id === -1){
         return;
     }
     $("#effect"+ id).css({"zIndex":"0", "border":"1px solid rgba(220,220,220,1)"});
-    $("#effectController"+ id).css({"zIndex":"0", "border":"1px solid rgba(220,0,0,1)"});
+    $("#effectController"+ id).css({"zIndex":"0", "background":"rgb(217, 232, 219)"});
 
     var scrollTop = $("#effectController"+ id)[0].offsetTop - $("#effectList-container")[0].offsetTop -  $("#effectList-container")[0].scrollTop;
     if (scrollTop < 0){
         $("#effectList-container")[0].scrollTop += scrollTop;
     }
 
-    var scrollButtom = ($("#effectController"+ id)[0].offsetTop + $("#effectController"+ id)[0].offsetHeight) - ($("#effectList-container")[0].offsetTop + $("#effectList-container")[0].offsetHeight)  -  $("#effectList-container")[0].scrollTop;
+    var scrollButtom = ($("#effectController"+ id)[0].offsetTop + $("#effectController"+ id)[0].offsetHeight) - ($("#effectList-container")[0].offsetHeight)  -  $("#effectList-container")[0].scrollTop;
     if (scrollButtom > 0){
         $("#effectList-container")[0].scrollTop += scrollButtom;
     }
@@ -240,19 +246,23 @@ function refreshHandler(){
             $( "#slider-range-" + i ).slider({
                 range: true,
                 min: 0,
-                max: $( "#video-previewer" )[0].duration,
-                values: [ effectList[i].begin, effectList[i].end ],
+                max: $( "#video-previewer" )[0].duration*1000,
+                values: [ effectList[i].begin*1000, effectList[i].end*1000 ],
                 slide: function( event, ui ) {
                     var sliderID = ui.handle.parentNode.id;
                     var index = parseInt(sliderID.substr(sliderID.lastIndexOf("-") + 1));
-                    effectList[index].begin = ui.values[0];
-                    effectList[index].end = ui.values[1];
-                    $( "#amount-" + index).val( new Date(ui.values[0]*1000).Format("hh:mm:ss") + " - " + new Date(ui.values[1]*1000).Format("hh:mm:ss") );
+                    effectList[index].begin = ui.values[0]/1000;
+                    effectList[index].end = ui.values[1]/1000;
+                    $( "#amount-" + index).val( new Date(ui.values[0]).Format("hh:mm:ss") + " - " + new Date(ui.values[1]).Format("hh:mm:ss") );
                     refreshEffect();
                     selectEffect(index);
                 }
             });
-            $( "#amount-" + i ).val( new Date(effectList[i].begin*1000).Format("hh:mm:ss") + " - " + new Date(effectList[i].end*1000).Format("hh:mm:ss") );
+            $( "#amount-" + i ).val( new Date(effectList[i].begin).Format("hh:mm:ss") + " - " + new Date(effectList[i].end).Format("hh:mm:ss") );
+            $("#effectController" + i)[0].onclick = function (e) {
+                var index = parseInt(e.currentTarget.id.replace("effectController", ""));
+                selectEffect(index);
+            };
         }
     }
     $("#effect-previewer").mousedown(function(e) {

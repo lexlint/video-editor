@@ -75,6 +75,16 @@ i.hander {
 }
 
 #effectList{
+    margin:auto;
+}
+
+#timeline{
+    position: absolute;
+    z-index:1;
+    top: 0; left: 0;
+    width: 1px;
+    height: 100%;
+    background-color: red;
 }
 
 #tools-container{
@@ -175,6 +185,7 @@ ul{
 }
 
 #effectList-container{
+    position:relative;
     max-height:350px;
     overflow:scroll;
 }
@@ -187,7 +198,7 @@ li.effectController{
 
 .timespan{
     border:0;
-    color:#f6931f;
+    background-color: rgba(0,0,0,0);
     font-weight:bold;
 }
 
