@@ -16,7 +16,13 @@ function initMsgCenter(){
     }
 }
 
+function initMusicCaptureUI() {
+    document.getElementById("chrome-extension-music-capture-detect").style = "visibility: hidden; height: 0;";
+    document.getElementById("chrome-extension-music-capture-content").style = "visibility: visible";
+}
+
 initMsgCenter();
+initMusicCaptureUI();
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(sender.tab ?

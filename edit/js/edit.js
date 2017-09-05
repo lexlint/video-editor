@@ -220,7 +220,7 @@ function selectEffect(id) {
     $("#effect"+ id).css({"zIndex":"0", "border":"1px solid rgba(220,220,220,1)"});
     $("#effectController"+ id).css({"zIndex":"0", "background":"rgb(217, 232, 219)"});
 
-    var scrollTop = $("#effectController"+ id)[0].offsetTop - $("#effectList-container")[0].offsetTop -  $("#effectList-container")[0].scrollTop;
+    var scrollTop = $("#effectController"+ id)[0].offsetTop -  $("#effectList-container")[0].scrollTop;
     if (scrollTop < 0){
         $("#effectList-container")[0].scrollTop += scrollTop;
     }
