@@ -355,7 +355,7 @@ function addText(){
 
     var newEffectController = "<li id =\"effectController";
     newEffectController += numEffect;
-    newEffectController += "\"><button onclick=\"deleteEffect(this.parentElement.id)\">删除</button><label>时间范围：</label><input type=\"text\" style=\"border:0; color:#f6931f; font-weight:bold; \" id=\"amount-";
+    newEffectController += "\"><button onclick=\"deleteEffect(this.parentElement.id)\">删除</button><label>时间范围：</label><input type=\"text\" class=\"timespan\" id=\"amount-";
     newEffectController += numEffect;
     newEffectController += "\"/><label>";
     newEffectController += inputText.value;
