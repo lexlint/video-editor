@@ -17,8 +17,14 @@ function initMsgCenter(){
 }
 
 function initMusicCaptureUI() {
-    document.getElementById("chrome-extension-music-capture-detect").style = "visibility: hidden; height: 0;";
-    document.getElementById("chrome-extension-music-capture-content").style = "visibility: visible";
+    var captureDetect = document.getElementById("chrome-extension-music-capture-detect");
+    if(captureDetect != undefined){
+        captureDetect.style = "visibility: hidden; height: 0;";
+    }
+    var captureContent = document.getElementById("chrome-extension-music-capture-content");
+    if(captureContent != undefined){
+        captureContent.style = "visibility: visible";
+    }
 }
 
 initMsgCenter();
@@ -32,17 +38,17 @@ chrome.runtime.onMessage.addListener(
             case "music":{
                 var url = request.url;
                 var musicCapture = document.getElementById("music-capture");
-                if(musicCapture){
+                if(musicCapture != undefined){
                     //避免重入
                     if(musicCapture.src != url){
                         musicCapture.src = url;
 
                         var musicStatus = document.getElementById("music-status");
-                        if(musicStatus){
+                        if(musicStatus != undefined){
                             musicStatus.innerText = "检测到音乐...";
                         }
                         var musicTip = document.getElementById("music-tip");
-                        if(musicTip){
+                        if(musicTip != undefined){
                             musicTip.innerText = url;
                         }
                     }
