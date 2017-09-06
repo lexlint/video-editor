@@ -14,13 +14,7 @@ function getGUID(){
     return $uuid;
 }
 
-if ((($_FILES["file"]["type"] == "audio/mp3")
-        || ($_FILES["file"]["type"] == "audio/mpeg")
-        || ($_FILES["file"]["type"] == "audio/x-m4a")
-        || ($_FILES["file"]["type"] == "text/plain")
-        || ($_FILES["file"]["type"] == "application/octet-stream")
-    )
-    && ($_FILES["file"]["size"] < 10*1024*1024))
+if ($_FILES["file"]["size"] < 10*1024*1024)
 {
     if ($_FILES["file"]["error"] > 0)
     {

@@ -1,6 +1,6 @@
 {
     "name": "捕获音乐",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "manifest_version": 2,
     "icons": {
         "16": "icon16.png",
