@@ -35,6 +35,12 @@ echo $script;
 $S=json_decode($script);
 print_r($S);
 
+$cfg = parse_ini_file("./../ve.ini",true);
+$saved = getenv("LD_LIBRARY_PATH");        // save old value
+$newld = $cfg["ffmpeg_path"]["lib"];      // extra paths to add
+if ($saved) { $newld .= ":$saved"; }                // append old paths if any
+putenv("LD_LIBRARY_PATH=$newld");           // set new value
+
 //添加图像
 function filter_img($var)
 {
@@ -131,7 +137,7 @@ if(is_file($file)){
     unlink($file);
 }
 
-$command = "ffmpeg -i ".($S[count($S)-1]->file).$img_input.$bgm_input
+$command = $cfg["ffmpeg_path"]["bin"]."ffmpeg -i ".($S[count($S)-1]->file).$img_input.$bgm_input
     ." -filter_complex \"".$filter
     ." -map ".($vcount==0?"0:v":"[dest".$vcount."]")." -map ".(strlen($bgm_mix) > 0 ? "[aout]" : "0:a")." -movflags faststart ".$file." 2>&1";
 
@@ -146,4 +152,7 @@ echo $jumpUrl;
 echo "<script type='text/javascript'>";
 echo "window.location.href='$jumpUrl'";
 echo "</script>";
+
+putenv("LD_LIBRARY_PATH=$saved");        // restore old value
+
 ?>

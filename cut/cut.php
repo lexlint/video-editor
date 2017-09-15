@@ -11,7 +11,6 @@
 parse_str(urldecode($_SERVER["QUERY_STRING"]));
 
 $jumpUrl = "cut_result.html?";
-
 $jumpUrl .= "filesCount=".count($segments)."&";
 
 for ($x=0; $x<count($segments); $x++) {
@@ -22,7 +21,7 @@ for ($x=0; $x<count($segments); $x++) {
 
     $file = substr_replace($parts["path"], "_".$x, - 4, 0);
 
-    $command = "ffmpeg ".$segments[$x]." -i ".$video." -c copy -movflags faststart ".$file." 2>&1";
+    $command = $cfg["ffmpeg_path"]["bin"]."ffmpeg ".$segments[$x]." -i ".$video." -c copy -movflags faststart ".$file." 2>&1";
 
     echo $command;
     echo "<p>";
@@ -32,7 +31,7 @@ for ($x=0; $x<count($segments); $x++) {
     $jumpUrl .= "files".$x."=".$file."&";
 
     $output = shell_exec($command);
-    //echo $output;
+    echo $output;
 };
 echo $jumpUrl;
 
@@ -40,5 +39,6 @@ echo "<script type='text/javascript'>";
 echo "window.location.href='$jumpUrl'";
 echo "</script>";
 
+putenv("LD_LIBRARY_PATH=$saved");        // restore old value
 //echo shell_exec("ffmpeg -ss 00:00:10 -t 00:00:10 -i lol.mp4 -c copy -movflags faststart lol6.mp4  2>&1");
 ?>
