@@ -13,6 +13,13 @@ parse_str(urldecode($_SERVER["QUERY_STRING"]));
 $jumpUrl = "cut_result.html?";
 $jumpUrl .= "filesCount=".count($segments)."&";
 
+$cfg = parse_ini_file("./../ve.ini",true);
+
+$saved = getenv("LD_LIBRARY_PATH");        // save old value
+$newld = $cfg["ffmpeg_path"]["lib"];      // extra paths to add
+if ($saved) { $newld .= ":$saved"; }                // append old paths if any
+putenv("LD_LIBRARY_PATH=$newld");           // set new value
+
 for ($x=0; $x<count($segments); $x++) {
     echo $segments[$x];
     echo "<p>";
